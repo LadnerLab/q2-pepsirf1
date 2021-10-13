@@ -1,3 +1,3 @@
-from q2_reveal.actions import enrich
+from q2_autopepsirf.actions import enrich
 
 __all__ = ['enrich']
