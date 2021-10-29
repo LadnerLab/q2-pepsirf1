@@ -27,6 +27,7 @@ from q2_pepsirf.format_types import (
     PeptideBinDirFmt, PeptideBins
     )
 import q2_pepsirf.actions as actions
+import q2_pepsirf.actions.zscore as zscore
 
 from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
@@ -122,15 +123,15 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
-        function=actions.zscore.zscore,
+        function=zscore.zscore,
         inputs={
-                'scores': FeatureTable[Normed | RawCounts],
+                'scores': FeatureTable[Normed | RawCounts | NormedDifference | NormedDiffRatio],
                 'bins': PeptideBins
         },
         parameters={
                 'trim': Float % Range(0.0, 100.0),
                 'hdi': Float % Range(0.0, None),
-                'num_threads': Int % (1, None),
+                'num_threads': Int % Range(1, None),
                 'pepsirf_binary': Str
         },
         outputs=[
@@ -151,7 +152,7 @@ plugin.methods.register_function(
                         "user should provide the high density interval to be used for calculation of mean and stdev. For "
                         "example, '--hdi 0.95' would instruct the program to utilize the 95% highest density interval (from each "
                         "bin) for these calculations.",
-                'num_thread': "The number of threads to use for analyses.",
+                'num_threads': "The number of threads to use for analyses.",
                 'pepsirf_binary': "The binary to call pepsirf on your system."
         },
         output_descriptions={
