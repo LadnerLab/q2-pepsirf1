@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import qiime2.plugin.model as model
+import os
 from qiime2.plugin import SemanticType
 
 from q2_types.feature_table import FeatureTable
@@ -34,7 +35,12 @@ PepsirfContingencyTSVDirFmt = model.SingleFileDirectoryFormat(
 
 class PeptideIDListFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
-        pass
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        'TXT file is empty, not a '
+                        'enriched peptides file.')
 
 class EnrichedPeptideDirFmt(model.DirectoryFormat):
     pairwise = model.FileCollection(
@@ -43,7 +49,12 @@ class EnrichedPeptideDirFmt(model.DirectoryFormat):
 
 class ZscoreNanFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
-        pass
+        with self.open() as fh:
+            for _, line in zip(range(1), fh):
+                if not line.startswith('Probe name\t'):
+                    raise model.ValidationError(
+                        'nan does not contain "Probe name" as the first header. '
+                        'Not a .nan file.')
 
 ZscoreNanDirFmt = model.SingleFileDirectoryFormat(
     'ZscoreNanDirFmt',
@@ -52,7 +63,11 @@ ZscoreNanDirFmt = model.SingleFileDirectoryFormat(
 
 class PeptideBinFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
-        pass
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        'TSV is empty, not a bins file.')
 
 PeptideBinDirFmt = model.SingleFileDirectoryFormat(
     'PeptideBinDirFmt',
