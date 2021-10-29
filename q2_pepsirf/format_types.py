@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import qiime2.plugin.model as model
 from qiime2.plugin import SemanticType
 
@@ -7,8 +8,12 @@ from q2_types.feature_table import FeatureTable
 Normed = SemanticType('Normed', variant_of=FeatureTable.field['content'])
 NormedDifference = SemanticType('NormedDifference', variant_of=FeatureTable.field['content'])
 NormedDiffRatio = SemanticType('NormedDiffRatio', variant_of=FeatureTable.field['content'])
+NormedRatio = SemanticType('NormedRatio', variant_of=FeatureTable.field['content'])
+NormedSized = SemanticType('NormedSized', variant_of=FeatureTable.field['content'])
 Zscore = SemanticType('Zscore', variant_of=FeatureTable.field['content'])
 RawCounts = SemanticType('RawCounts', variant_of=FeatureTable.field['content'])
+
+PairwiseEnrichment = SemanticType('PairwiseEnrichment')
 
 
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
@@ -24,3 +29,12 @@ PepsirfContingencyTSVDirFmt = model.SingleFileDirectoryFormat(
     'PepsirfContingencyTSVDirFmt',
     'pepsirf-table.tsv',
     PepsirfContingencyTSVFormat)
+
+class PeptideIDListFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        pass
+
+class EnrichedPeptideDirFmt(model.DirectoryFormat):
+    pairwise = model.FileCollection(
+        r'.+~.+_enriched\.txt',
+        format=PeptideIDListFmt)
