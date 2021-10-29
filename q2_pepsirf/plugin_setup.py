@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import importlib
 import q2_pepsirf
+from q2_pepsirf.actions.norm import norm
 
 from qiime2.plugin import (Plugin,
                         SemanticType,
@@ -14,37 +15,55 @@ from qiime2.plugin import (Plugin,
                         Visualization,
                         Metadata,
                         TypeMap,
-                        Choices)
+                        Choices,
+                        Float)
 
 from q2_pepsirf.format_types import (
     EnrichedPeptideDirFmt, Normed, NormedDifference, 
     NormedDiffRatio, NormedRatio, NormedSized, 
     PairwiseEnrichment, PeptideIDListFmt, Zscore, RawCounts,
-    PepsirfContingencyTSVDirFmt, PepsirfContingencyTSVFormat
+    PepsirfContingencyTSVDirFmt, PepsirfContingencyTSVFormat, 
+    ZscoreNan, ZscoreNanDirFmt, ZscoreNanFormat, PeptideBinFormat,
+    PeptideBinDirFmt, PeptideBins
     )
 import q2_pepsirf.actions as actions
 
 from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
 
-# This is the plugin object. It is what the framework will load and what an
-# interface will interact with. Basically every registration we perform will
-# involve this object in some way.
 plugin = Plugin("pepsirf", version='0.0.1.dev',
                 website="https://github.com/LadnerLab/q2-pepsirf")
 
 plugin.register_formats(PepsirfContingencyTSVFormat,
                         PepsirfContingencyTSVDirFmt,
                         PeptideIDListFmt,
-                        EnrichedPeptideDirFmt)
+                        EnrichedPeptideDirFmt,
+                        ZscoreNanFormat,
+                        ZscoreNanDirFmt, 
+                        PeptideBinFormat, 
+                        PeptideBinDirFmt)
 
-plugin.register_semantic_types(Normed, NormedDifference, NormedDiffRatio, NormedRatio, NormedSized, Zscore, RawCounts, PairwiseEnrichment)
+plugin.register_semantic_types(
+        Normed, NormedDifference, NormedDiffRatio,
+        NormedRatio, NormedSized, Zscore, RawCounts,
+        PairwiseEnrichment)
 plugin.register_semantic_type_to_format(
-        FeatureTable[Normed | NormedDifference | NormedDiffRatio | NormedRatio | NormedSized | Zscore | RawCounts],
+        FeatureTable[
+                Normed | NormedDifference |
+                NormedDiffRatio | NormedRatio 
+                | NormedSized | Zscore | RawCounts],
         BIOMV210DirFmt)
 plugin.register_semantic_type_to_format(
         PairwiseEnrichment,
         EnrichedPeptideDirFmt
+)
+plugin.register_semantic_type_to_format(
+        ZscoreNan,
+        ZscoreNanDirFmt
+)
+plugin.register_semantic_type_to_format(
+        PeptideBins,
+        PeptideBinDirFmt
 )
 
 T_approach, T_out = TypeMap ({
@@ -65,7 +84,7 @@ plugin.methods.register_function(
                 'normalize_approach': T_approach,
                 'negative_id': Str,
                 'negative_names': List[Str],
-                'precision': Int,
+                'precision': Int % Range(0, None),
                 'pepsirf_binary': Str,
         },
         outputs=[
@@ -100,6 +119,52 @@ plugin.methods.register_function(
         },
         name='pepsirf norm module',
         description="Normalize raw count data with pepsirf's norm module"
+)
+
+plugin.methods.register_function(
+        function=actions.zscore.zscore,
+        inputs={
+                'scores': FeatureTable[Normed | RawCounts],
+                'bins': PeptideBins
+        },
+        parameters={
+                'trim': Float % Range(0.0, 100.0),
+                'hdi': Float % Range(0.0, None),
+                'num_threads': Int % (1, None),
+                'pepsirf_binary': Str
+        },
+        outputs=[
+                ('zscore_output', FeatureTable[Zscore]),
+                ('nan_report', ZscoreNan)
+        ],
+        input_descriptions={
+                'scores': "Name of the file to use as input. Should be a score matrix in the "
+                        "format as output by the demux and subjoin modules. Raw or normalized read counts can be used.",
+                'bins': "Name of the file containing bins, one bin per line, as output by the bin module. Each bin contains a "
+                        "tab-delimited list of peptide names."
+        },
+        parameter_descriptions={
+                'trim': "Percentile of lowest and highest counts within a bin to ignore when calculating "
+                        "the mean and standard deviation.",
+                'hdi': "Alternative approach for discarding outliers prior to calculating mean and stdev. If provided, this "
+                        "argument will override --trim, which trims evenly from both sides of the distribution. For --hdi, the "
+                        "user should provide the high density interval to be used for calculation of mean and stdev. For "
+                        "example, '--hdi 0.95' would instruct the program to utilize the 95% highest density interval (from each "
+                        "bin) for these calculations.",
+                'num_thread': "The number of threads to use for analyses.",
+                'pepsirf_binary': "The binary to call pepsirf on your system."
+        },
+        output_descriptions={
+                'zscore_output': "Name for the output Z scores file. This file will be a FeatureTable[Zscore] with the same "
+                               "dimensions as the input score file. Each peptide will be written with its z-score within each sample.",
+                'nan_report': "Name of the file to write out information regarding peptides that are given a zscore of 'nan'. This "
+                        "occurs when the mean score of a bin and the score of the focal peptide are both zero. This will be a "
+                        "ZscoreNan file, with three columns per line. The first column will contain the name of the peptide, "
+                        "the second will be the name of the sample, and the third will be the bin number of the probe. This bin "
+                        "number corresponds to the line number in the bins file, within which the probe was found."
+        },
+        name='pepsirf zscore module',
+        description="c=Calculate Z scores for each peptide in each sample with pepsirf's zscore module"
 )
 
 importlib.import_module("q2_pepsirf.transformers")

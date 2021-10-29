@@ -14,6 +14,8 @@ Zscore = SemanticType('Zscore', variant_of=FeatureTable.field['content'])
 RawCounts = SemanticType('RawCounts', variant_of=FeatureTable.field['content'])
 
 PairwiseEnrichment = SemanticType('PairwiseEnrichment')
+ZscoreNan = SemanticType('ZscoreNan')
+PeptideBins = SemanticType('PeptideBins')
 
 
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
@@ -38,3 +40,21 @@ class EnrichedPeptideDirFmt(model.DirectoryFormat):
     pairwise = model.FileCollection(
         r'.+~.+_enriched\.txt',
         format=PeptideIDListFmt)
+
+class ZscoreNanFormat(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        pass
+
+ZscoreNanDirFmt = model.SingleFileDirectoryFormat(
+    'ZscoreNanDirFmt',
+    'nan-zscores.nan',
+    ZscoreNanFormat)
+
+class PeptideBinFormat(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        pass
+
+PeptideBinDirFmt = model.SingleFileDirectoryFormat(
+    'PeptideBinDirFmt',
+    'bins.tsv',
+    PeptideBinFormat)
