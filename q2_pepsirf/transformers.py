@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from q2_autopepsirf.plugin_setup import plugin
-from q2_autopepsirf.format_types import PepsirfContingencyTSVFormat
+from q2_pepsirf.plugin_setup import plugin
+from q2_pepsirf.format_types import PepsirfContingencyTSVFormat
 
 from q2_types.feature_table import BIOMV210Format
 
@@ -18,7 +18,7 @@ def _0(ff: PepsirfContingencyTSVFormat) -> BIOMV210Format:
                        sample_ids=dataframe.columns)
 
     with result.open() as fh:
-        table.to_hdf5(fh, generated_by="q2-autopepsirf for pepsirf")
+        table.to_hdf5(fh, generated_by="q2-pepsirf for pepsirf")
 
     return result
 
