@@ -17,7 +17,8 @@ RawCounts = SemanticType('RawCounts', variant_of=FeatureTable.field['content'])
 PairwiseEnrichment = SemanticType('PairwiseEnrichment')
 ZscoreNan = SemanticType('ZscoreNan')
 PeptideBins = SemanticType('PeptideBins')
-
+InfoSNPN = SemanticType('InfoSNPN')
+InfoSumOfProbes = SemanticType('InfoSumOfProbes')
 
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
@@ -46,6 +47,9 @@ class EnrichedPeptideDirFmt(model.DirectoryFormat):
     pairwise = model.FileCollection(
         r'.+~.+_enriched\.txt',
         format=PeptideIDListFmt)
+    @pairwise.set_path_maker
+    def pairwise_pathmaker(self, a, b):
+        return f'{a}~{b}_enriched.txt'
 
 class ZscoreNanFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
@@ -73,3 +77,30 @@ PeptideBinDirFmt = model.SingleFileDirectoryFormat(
     'PeptideBinDirFmt',
     'bins.tsv',
     PeptideBinFormat)
+
+class PepsirfInfoSNPNFormat(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        'TSV is empty.')
+
+PepsirfInfoSNPNDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfInfoSNPNDirFmt',
+    'SN.tsv',
+    PepsirfInfoSNPNFormat)
+
+class PepsirfInfoSumOfProbesFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            for _, line in zip(range(1), fh):
+                if not line.startswith('Sample name\t'):
+                    raise model.ValidationError(
+                        'TSV does not start with "Sample name"')
+
+
+PepsirfInfoSumOfProbesDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfInfoSumOfProbesDirFmt',
+    'RC.tsv',
+    PepsirfInfoSumOfProbesFmt)

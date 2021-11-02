@@ -16,7 +16,8 @@ from qiime2.plugin import (Plugin,
                         Metadata,
                         TypeMap,
                         Choices,
-                        Float)
+                        Float,
+                        Bool)
 
 from q2_pepsirf.format_types import (
     EnrichedPeptideDirFmt, Normed, NormedDifference, 
@@ -24,10 +25,14 @@ from q2_pepsirf.format_types import (
     PairwiseEnrichment, PeptideIDListFmt, Zscore, RawCounts,
     PepsirfContingencyTSVDirFmt, PepsirfContingencyTSVFormat, 
     ZscoreNan, ZscoreNanDirFmt, ZscoreNanFormat, PeptideBinFormat,
-    PeptideBinDirFmt, PeptideBins
+    PeptideBinDirFmt, PeptideBins, PepsirfInfoSumOfProbesDirFmt,
+    PepsirfInfoSumOfProbesFmt, InfoSumOfProbes, PepsirfInfoSNPNFormat,
+    PepsirfInfoSNPNDirFmt, InfoSNPN
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
+import q2_pepsirf.actions.enrich as enrich
+import q2_pepsirf.actions.info as info
 
 from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
@@ -42,7 +47,11 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         ZscoreNanFormat,
                         ZscoreNanDirFmt, 
                         PeptideBinFormat, 
-                        PeptideBinDirFmt)
+                        PeptideBinDirFmt,
+                        PepsirfInfoSNPNDirFmt,
+                        PepsirfInfoSNPNFormat,
+                        PepsirfInfoSumOfProbesDirFmt,
+                        PepsirfInfoSumOfProbesFmt)
 
 plugin.register_semantic_types(
         Normed, NormedDifference, NormedDiffRatio,
@@ -66,6 +75,14 @@ plugin.register_semantic_type_to_format(
         PeptideBins,
         PeptideBinDirFmt
 )
+plugin.register_semantic_type_to_format(
+        InfoSNPN,
+        PepsirfInfoSNPNDirFmt
+)
+plugin.register_semantic_type_to_format(
+        InfoSumOfProbes,
+        PepsirfInfoSumOfProbesDirFmt
+)
 
 T_approach, T_out = TypeMap ({
         Str%Choices("col_sum"): Normed,
@@ -76,7 +93,7 @@ T_approach, T_out = TypeMap ({
 })
 
 plugin.methods.register_function(
-        function=actions.norm.norm,
+        function=norm,
         inputs={
                 'peptide_scores': FeatureTable[RawCounts | Normed],
                 'negative_control': FeatureTable[RawCounts | Normed]
@@ -165,7 +182,107 @@ plugin.methods.register_function(
                         "number corresponds to the line number in the bins file, within which the probe was found."
         },
         name='pepsirf zscore module',
-        description="c=Calculate Z scores for each peptide in each sample with pepsirf's zscore module"
+        description="Calculate Z scores for each peptide in each sample with pepsirf's zscore module"
 )
 
+plugin.methods.register_function(
+        function=enrich.enrich,
+        inputs={
+                'zscores': FeatureTable[Zscore],
+                'raw_scores': FeatureTable[RawCounts]
+        },
+        parameters={
+                'exact_z_thresh': Str,
+                'raw_constraint': Int % Range(0, None),
+                'enrichment_failure': Bool,
+                'truncate': Bool,
+                'pepsirf_binary': Str,
+                'source': MetadataColumn[Categorical]
+        },
+        outputs=[
+                ('dir_fmt_output', PairwiseEnrichment)
+        ],
+        input_descriptions={
+                'zscores': "FeatureTable containing z scores of the normalized read counts. "
+                        "Fist column header must be 'Sequence Name' as produced by pepsirf.",
+                'raw_scores': "This matrix must contain the raw counts for each Peptide for every sample of "
+                        "interest. If included, '--raw_score_constraint' must also be specified."
+        },
+        parameter_descriptions={
+                'exact_z_thresh': "Exact z score thresholds either individual or combined.",
+                'raw_constraint': "The minimum total raw count across all peptides for a sample to be "
+                                "included in the analysis.This provides a way to impose a minimum read "
+                                "count for a sample to be evaluated.",
+                'enrichment_failure': "For each sample set that does not result in the generation of an enriched peptide file, a row of two "
+                                "tab-delimited columns is provided: the first column contains the replicate names (comma-delimited) and "
+                                "the second column provides the reason why the sample did not result in an enriched peptide file. "
+                                "This file is output to the same directory as the enriched peptide files. The 'Reason' column will contain "
+                                "one of the following: 'Raw read count threshold' or 'No enriched peptides'.",
+                'truncate': "By default each filename in the output directory will include every replicate name joined by the "
+                        "'join_on' value. Alternatively, if more than two replicates are being evaluated, then you may include "
+                        "this flag to stop the filenames from including more than 3 samplenames in the output. When this flag is "
+                        "used, the output names will be of the form 'A~B~C~1more', for example.",
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'source': "Metadata file containing all sample names and their source groups. "
+                        "Used to create pairs tsv to run pepsirf enrich module."
+        },
+        output_descriptions={
+                'dir_fmt_output': "Directory formatted qza containing lists of enriched peptides"
+        },
+        name='pepsirf enrich module',
+        description="Determines which peptides are enriched in samples with pepsirf's enrich module"
+)
+
+plugin.methods.register_function(
+        function=info.infoSNPN,
+        inputs={
+                'input': FeatureTable[
+                        Normed | NormedDifference | NormedDiffRatio
+                        | RawCounts | NormedDiffRatio | NormedSized],
+        },
+        parameters={
+                'get': Str%Choices("samples", "probes"),
+                'pepsirf_binary': Str
+        },
+        outputs=[
+                ('snpn_output', InfoSNPN)
+        ],
+        input_descriptions={
+                'input': ""
+        },
+        parameter_descriptions={
+                'get': ""
+        },
+        output_descriptions={
+                'snpn_output':""
+        },
+        name='pepsirf info module',
+        description=""
+)
+
+plugin.methods.register_function(
+        function=info.infoSumOfProbes,
+        inputs={
+                'input': FeatureTable[
+                        Normed | NormedDifference | NormedDiffRatio
+                        | RawCounts | NormedDiffRatio | NormedSized],
+        },
+        parameters={
+                'pepsirf_binary': Str
+        },
+        outputs=[
+                ('sum_of_probes_output', InfoSumOfProbes)
+        ],
+        input_descriptions={
+                'input': ""
+        },
+        parameter_descriptions={
+                'pepsirf_binary': ""
+        },
+        output_descriptions={
+                'sum_of_probes_output':""
+        },
+        name='pepsirf info module',
+        description=""
+)
 importlib.import_module("q2_pepsirf.transformers")
