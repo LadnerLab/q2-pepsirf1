@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import importlib
-import q2_pepsirf
 from q2_pepsirf.actions.norm import norm
+from q2_pepsirf.actions.bin import bin
 
 from qiime2.plugin import (Plugin,
                         SemanticType,
@@ -62,7 +62,7 @@ plugin.register_semantic_type_to_format(
                 Normed | NormedDifference |
                 NormedDiffRatio | NormedRatio 
                 | NormedSized | Zscore | RawCounts],
-        BIOMV210DirFmt)
+        PepsirfContingencyTSVDirFmt)
 plugin.register_semantic_type_to_format(
         PairwiseEnrichment,
         EnrichedPeptideDirFmt
@@ -248,16 +248,17 @@ plugin.methods.register_function(
                 ('snpn_output', InfoSNPN)
         ],
         input_descriptions={
-                'input': ""
+                'input': "An input score matrix to gather information from."
         },
         parameter_descriptions={
-                'get': ""
+                'get': "Specify weather you want to collect sample names or probe/peptide names",
+                'pepsirf_binary': "The binary to call pepsirf on your system."
         },
         output_descriptions={
-                'snpn_output':""
+                'snpn_output':"InfoSNPN file in the form of a file with no header, one sample name per line."
         },
-        name='pepsirf info module',
-        description=""
+        name='pepsirf info (samples/peptide names) module',
+        description="Gathers the number of samples and peptides in the matrix using pepsirf's info modules"
 )
 
 plugin.methods.register_function(
@@ -274,15 +275,55 @@ plugin.methods.register_function(
                 ('sum_of_probes_output', InfoSumOfProbes)
         ],
         input_descriptions={
-                'input': ""
+                'input': "An input score matrix to gather information from."
         },
         parameter_descriptions={
-                'pepsirf_binary': ""
+                'pepsirf_binary': "The binary to call pepsirf on your system."
         },
         output_descriptions={
-                'sum_of_probes_output':""
+                'sum_of_probes_output':"InfoSumOfProbes file, The first entry in each column will be the name of the "
+                                "sample, and the second will be the sum of the peptide/probe scores for the sample."
         },
-        name='pepsirf info module',
-        description=""
+        name='pepsirf info (sum of probes) module',
+        description="Gathers the sum of probes per sample in the matrix using pepsirf's info module"
+)
+
+plugin.methods.register_function(
+        function=bin,
+        inputs={
+                'scores': FeatureTable[Normed],
+        },
+        parameters={
+                'pepsirf_binary': Str,
+                'bin_size': Int % Range(1, None),
+                'round_to': Int % Range(0, None)
+        },
+        outputs=[
+                ('bin_output', PeptideBins)
+        ],
+        input_descriptions={
+                'scores': "Input tab-delimited normalized score matrix file to use for peptide binning. "
+                        "This matrix should only contain info for the negative control samples that "
+                        "should be used to generate bins (see subjoin module for help generatinig input "
+                        "matrix). Peptides with similar scores, summed across the negative controls, "
+                        "will be binned together."
+        },
+        parameter_descriptions={
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'bin_size': "The minimum number of peptides that a bin must contain. If a bin would be "
+                        "created with fewer than bin_size peptides, it will be combined with the next "
+                        "bin until at least bin_size peptides are found.",
+                'round_to': "The 'rounding factor' for the scores parsed from the score matrix prior to "
+                        "binning. Scores found in the matrix will be rounded to the nearest 1/10^x for a "
+                        "rounding factor x. For example, a rounding factor of 0 will result in rounding "
+                        "to the nearest integer, while a rounding factor of 1 will result in rounding to "
+                        "the nearest tenth."
+        },
+        output_descriptions={
+                'bin_output':"PeptideBins file that contains  one bin per line and each "
+                        "bin will be a tab-delimited list of the names of the peptides in the bin."
+        },
+        name='pepsirf bin module',
+        description="Creates groups of peptides with similar starting abundances with pepsirf's bin module"
 )
 importlib.import_module("q2_pepsirf.transformers")
