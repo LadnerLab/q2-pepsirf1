@@ -1,3 +1,6 @@
-from q2_pepsirf.actions import norm
+from q2_pepsirf.actions.norm import norm
+from q2_pepsirf.actions.info import infoSumOfProbes, infoSNPN
+from q2_pepsirf.actions.enrich import enrich
+from q2_pepsirf.actions.zscore import zscore
 
-__all__ = ['norm']
+__all__ = ['norm', 'infoSumOfProbes', 'infoSNPN', 'enrich', 'zscore']

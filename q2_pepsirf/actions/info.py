@@ -1,10 +1,14 @@
 import subprocess, os
 import tempfile, qiime2
 
+from qiime2.util import duplicate
+
 from q2_pepsirf.format_types import(
+    PepsirfInfoSNPNDirFmt,
     PepsirfInfoSNPNFormat,
     PepsirfInfoSumOfProbesFmt,
-    PepsirfContingencyTSVFormat
+    PepsirfContingencyTSVFormat,
+    InfoSNPN
 )
 
 def infoSNPN(
