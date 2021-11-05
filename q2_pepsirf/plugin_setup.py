@@ -27,7 +27,8 @@ from q2_pepsirf.format_types import (
     ZscoreNan, ZscoreNanDirFmt, ZscoreNanFormat, PeptideBinFormat,
     PeptideBinDirFmt, PeptideBins, PepsirfInfoSumOfProbesDirFmt,
     PepsirfInfoSumOfProbesFmt, InfoSumOfProbes, PepsirfInfoSNPNFormat,
-    PepsirfInfoSNPNDirFmt, InfoSNPN
+    PepsirfInfoSNPNDirFmt, InfoSNPN, ZscoreThreshFileFormat, ZscoreThreshFileDirFmt,
+    ZscoreThresh
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
@@ -51,7 +52,9 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         PepsirfInfoSNPNDirFmt,
                         PepsirfInfoSNPNFormat,
                         PepsirfInfoSumOfProbesDirFmt,
-                        PepsirfInfoSumOfProbesFmt)
+                        PepsirfInfoSumOfProbesFmt,
+                        ZscoreThreshFileFormat,
+                        ZscoreThreshFileDirFmt)
 
 plugin.register_semantic_types(
         Normed, NormedDifference, NormedDiffRatio,
@@ -82,6 +85,10 @@ plugin.register_semantic_type_to_format(
 plugin.register_semantic_type_to_format(
         InfoSumOfProbes,
         PepsirfInfoSumOfProbesDirFmt
+)
+plugin.register_semantic_type_to_format(
+        ZscoreThresh,
+        ZscoreThreshFileDirFmt
 )
 
 T_approach, T_out = TypeMap ({
@@ -189,7 +196,9 @@ plugin.methods.register_function(
         function=enrich.enrich,
         inputs={
                 'zscores': FeatureTable[Zscore],
-                'raw_scores': FeatureTable[RawCounts]
+                'raw_scores': FeatureTable[RawCounts],
+                'thresh_file': ZscoreThresh
+
         },
         parameters={
                 'exact_z_thresh': Str,
@@ -206,7 +215,9 @@ plugin.methods.register_function(
                 'zscores': "FeatureTable containing z scores of the normalized read counts. "
                         "Fist column header must be 'Sequence Name' as produced by pepsirf.",
                 'raw_scores': "This matrix must contain the raw counts for each Peptide for every sample of "
-                        "interest. If included, '--raw_score_constraint' must also be specified."
+                        "interest. If included, '--raw_score_constraint' must also be specified.",
+                'thresh_file': " The name of a tab-delimited file containing one tab-delimited matrix filename "
+                        "and threshold(s), one per line. If providing more than z score matrix."
         },
         parameter_descriptions={
                 'exact_z_thresh': "Exact z score thresholds either individual or combined.",
