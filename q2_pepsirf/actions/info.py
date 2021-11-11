@@ -1,5 +1,6 @@
 import subprocess, os
 import tempfile, qiime2
+import pandas as pd
 
 from qiime2.util import duplicate
 

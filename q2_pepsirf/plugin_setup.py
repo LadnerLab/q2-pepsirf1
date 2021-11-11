@@ -99,6 +99,8 @@ T_approach, T_out = TypeMap ({
         Str%Choices("size_factors"): NormedSized
 })
 
+
+
 plugin.methods.register_function(
         function=norm,
         inputs={
@@ -299,18 +301,24 @@ plugin.methods.register_function(
         description="Gathers the sum of probes per sample in the matrix using pepsirf's info module"
 )
 
+T_norm, T_flag, T_out = TypeMap ({
+        (Normed, Bool%Choices(False)): PeptideBins,
+        (NormedDifference | NormedDiffRatio | NormedRatio | NormedSized, Bool%Choices(True)): PeptideBins
+})
+
 plugin.methods.register_function(
         function=bin,
         inputs={
-                'scores': FeatureTable[Normed],
+                'scores': FeatureTable[T_norm],
         },
         parameters={
                 'pepsirf_binary': Str,
                 'bin_size': Int % Range(1, None),
-                'round_to': Int % Range(0, None)
+                'round_to': Int % Range(0, None),
+                'allow_other_normalization': T_flag
         },
         outputs=[
-                ('bin_output', PeptideBins)
+                ('bin_output', T_out)
         ],
         input_descriptions={
                 'scores': "Input tab-delimited normalized score matrix file to use for peptide binning. "

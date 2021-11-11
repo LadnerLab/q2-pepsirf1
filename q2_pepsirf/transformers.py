@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from q2_pepsirf.plugin_setup import plugin
-from q2_pepsirf.format_types import PepsirfContingencyTSVFormat
+from q2_pepsirf.format_types import PepsirfContingencyTSVFormat, PepsirfInfoSumOfProbesFmt
 
 from q2_types.feature_table import BIOMV210Format
 
@@ -34,4 +34,9 @@ def _1(ff: BIOMV210Format) -> PepsirfContingencyTSVFormat:
     df.index.name = "Sequence name"
     df.to_csv(str(result), sep='\t')
 
+    return result
+
+@plugin.register_transformer
+def _2(ff: PepsirfInfoSumOfProbesFmt) -> pd.DataFrame:
+    result = pd.read_csv(str(ff), sep='\t')
     return result

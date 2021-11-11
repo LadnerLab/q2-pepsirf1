@@ -1,5 +1,6 @@
 import subprocess, os
 import tempfile
+import sys
 
 from q2_pepsirf.format_types import (
      PeptideBinFormat,
@@ -7,12 +8,16 @@ from q2_pepsirf.format_types import (
 
 def bin(
     scores: PepsirfContingencyTSVFormat,
+    allow_other_normalization: bool = False,
     bin_size: int = 300,
     round_to: int = 0,
     pepsirf_binary: str = "pepsirf") -> PeptideBinFormat:
     
     #collect temp file names for bin output
     bin_out = PeptideBinFormat()
+
+    if allow_other_normalization:
+        print("hello world", file=sys.stderr, flush=True) 
 
     #collect absolute file path name if pepsirf binary is file
     if os.path.isfile(pepsirf_binary):
