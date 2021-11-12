@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 import importlib
-from q2_pepsirf.actions.norm import norm
-from q2_pepsirf.actions.bin import bin
 
 from qiime2.plugin import (Plugin,
                         SemanticType,
@@ -34,6 +32,8 @@ import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
 import q2_pepsirf.actions.enrich as enrich
 import q2_pepsirf.actions.info as info
+import q2_pepsirf.actions.norm as norm
+import q2_pepsirf.actions.bin as bin
 
 from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
@@ -102,7 +102,7 @@ T_approach, T_out = TypeMap ({
 
 
 plugin.methods.register_function(
-        function=norm,
+        function=norm.norm,
         inputs={
                 'peptide_scores': FeatureTable[RawCounts | Normed],
                 'negative_control': FeatureTable[RawCounts | Normed]
@@ -307,7 +307,7 @@ T_norm, T_flag, T_out = TypeMap ({
 })
 
 plugin.methods.register_function(
-        function=bin,
+        function=bin.bin,
         inputs={
                 'scores': FeatureTable[T_norm],
         },
