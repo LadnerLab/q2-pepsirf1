@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from q2_pepsirf.plugin_setup import plugin
-from q2_pepsirf.format_types import PepsirfContingencyTSVFormat, PepsirfInfoSumOfProbesFmt
+from q2_pepsirf.format_types import PepsirfContingencyTSVFormat, PepsirfInfoSumOfProbesFmt, EnrichedPeptideDirFmt, PeptideIDListFmt
 
 from q2_types.feature_table import BIOMV210Format
 
@@ -40,3 +40,18 @@ def _1(ff: BIOMV210Format) -> PepsirfContingencyTSVFormat:
 def _2(ff: PepsirfInfoSumOfProbesFmt) -> pd.DataFrame:
     result = pd.read_csv(str(ff), sep='\t')
     return result
+
+@plugin.register_transformer
+def _3(ff: EnrichedPeptideDirFmt ) -> pd.DataFrame:
+    pairwiseDict = {}
+    for relpath, series in ff.pairwise.iter_views(pd.Series):
+        pairwiseDict[relpath] = series
+    df = pd.DataFrame(pairwiseDict)
+    df = df.fillna(False)
+    return df
+
+@plugin.register_transformer
+def _4(ff: PeptideIDListFmt) -> pd.Series:
+    with ff.open() as fh:
+        ids = [id.strip() for id in fh.readlines()]
+    return pd.Series(True, index = ids)
