@@ -62,7 +62,7 @@ qiime tools import --input-path rawData.tsv \
 | Zscores | PepsirfContingencyTSVFormat | 'FeatureTable[Zscore]' |
 | Zscores Nan | ZscoreNanFormat | 'ZscoreNan' |
 | Bins | PeptideBinFormat | 'PeptideBins' |
-| Zscore Thresholds | ZscoreThreshFileFormat | 'ZscoreThresh' |
+| Enrich Thresholds | EnrichThreshFileFormat | 'EnrichThresh' |
 | Num. of Samples | PepsirfInfoSNPNFormat | 'InfoSNPN' |
 | Num. of Peptides | PepsirfInfoSNPNFormat | 'InfoSNPN' |
 | Sum of Probes | PepsirfInfoSumOfProbesFmt | 'InfoSumOfProbes' | 
@@ -87,7 +87,7 @@ qiime tools export --input-path rawData.qza \
 | Zscores | PepsirfContingencyTSVFormat |
 | Zscores Nan | ZscoreNanFormat |
 | Bins | PeptideBinFormat |
-| Zscore Thresholds | ZscoreThreshFileFormat |
+| Enrich Thresholds | EnrichThreshFileFormat |
 | Num. of Samples | PepsirfInfoSNPNFormat |
 | Num. of Peptides | PepsirfInfoSNPNFormat |
 | Sum of Probes | PepsirfInfoSumOfProbesFmt |
