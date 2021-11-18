@@ -22,8 +22,6 @@ def _0(ff: PepsirfContingencyTSVFormat) -> BIOMV210Format:
 
     return result
 
-
-
 @plugin.register_transformer
 def _1(ff: BIOMV210Format) -> PepsirfContingencyTSVFormat:
     result = PepsirfContingencyTSVFormat()
