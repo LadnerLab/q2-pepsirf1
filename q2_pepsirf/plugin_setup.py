@@ -25,8 +25,8 @@ from q2_pepsirf.format_types import (
     ZscoreNan, ZscoreNanDirFmt, ZscoreNanFormat, PeptideBinFormat,
     PeptideBinDirFmt, PeptideBins, PepsirfInfoSumOfProbesDirFmt,
     PepsirfInfoSumOfProbesFmt, InfoSumOfProbes, PepsirfInfoSNPNFormat,
-    PepsirfInfoSNPNDirFmt, InfoSNPN, ZscoreThreshFileFormat, ZscoreThreshFileDirFmt,
-    ZscoreThresh
+    PepsirfInfoSNPNDirFmt, InfoSNPN, EnrichThresh, EnrichThreshFileDirFmt,
+    EnrichThreshFileFormat
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
@@ -53,8 +53,8 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         PepsirfInfoSNPNFormat,
                         PepsirfInfoSumOfProbesDirFmt,
                         PepsirfInfoSumOfProbesFmt,
-                        ZscoreThreshFileFormat,
-                        ZscoreThreshFileDirFmt)
+                        EnrichThreshFileFormat,
+                        EnrichThreshFileDirFmt)
 
 plugin.register_semantic_types(
         Normed, NormedDifference, NormedDiffRatio,
@@ -87,8 +87,8 @@ plugin.register_semantic_type_to_format(
         PepsirfInfoSumOfProbesDirFmt
 )
 plugin.register_semantic_type_to_format(
-        ZscoreThresh,
-        ZscoreThreshFileDirFmt
+        EnrichThresh,
+        EnrichedPeptideDirFmt
 )
 
 T_approach, T_out = TypeMap ({
@@ -199,7 +199,7 @@ plugin.methods.register_function(
         inputs={
                 'zscores': FeatureTable[Zscore],
                 'raw_scores': FeatureTable[RawCounts],
-                'thresh_file': ZscoreThresh
+                'thresh_file': EnrichThresh
 
         },
         parameters={

@@ -19,7 +19,7 @@ ZscoreNan = SemanticType('ZscoreNan')
 PeptideBins = SemanticType('PeptideBins')
 InfoSNPN = SemanticType('InfoSNPN')
 InfoSumOfProbes = SemanticType('InfoSumOfProbes')
-ZscoreThresh = SemanticType('ZscoreThresh')
+EnrichThresh = SemanticType('EnrichThresh')
 
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
@@ -106,7 +106,7 @@ PepsirfInfoSumOfProbesDirFmt = model.SingleFileDirectoryFormat(
     'RC.tsv',
     PepsirfInfoSumOfProbesFmt)
 
-class ZscoreThreshFileFormat(model.TextFileFormat):
+class EnrichThreshFileFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
             line = list(zip(range(1), fh))
@@ -114,7 +114,7 @@ class ZscoreThreshFileFormat(model.TextFileFormat):
                 raise model.ValidationError(
                         'TSV is empty.')
 
-ZscoreThreshFileDirFmt = model.SingleFileDirectoryFormat(
-    'ZscoreThreshFileDirFmt',
+EnrichThreshFileDirFmt = model.SingleFileDirectoryFormat(
+    'EnrichThreshFileDirFmt',
     '_thresh.tsv',
-    ZscoreThreshFileFormat)
+    EnrichThreshFileFormat)
