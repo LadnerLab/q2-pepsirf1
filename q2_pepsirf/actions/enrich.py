@@ -5,7 +5,7 @@ import tempfile, qiime2
 from q2_pepsirf.format_types import (
     EnrichedPeptideDirFmt, 
     PepsirfContingencyTSVFormat,
-    ZscoreThreshFileFormat
+    EnrichThreshFileFormat
     )
 
 #function used to take source metadata and create pairs files
@@ -18,7 +18,7 @@ def _make_pairs_file(column, outpath):
 
 def enrich(
     source: qiime2.CategoricalMetadataColumn,
-    thresh_file: ZscoreThreshFileFormat = None,
+    thresh_file: EnrichThreshFileFormat = None,
     zscores: PepsirfContingencyTSVFormat = None,
     exact_z_thresh: str = None,
     raw_scores: PepsirfContingencyTSVFormat = None,
