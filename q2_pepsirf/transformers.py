@@ -53,3 +53,10 @@ def _4(ff: PeptideIDListFmt) -> pd.Series:
     with ff.open() as fh:
         ids = [id.strip() for id in fh.readlines()]
     return pd.Series(True, index = ids)
+    
+@plugin.register_transformer
+def _5(ff: PepsirfContingencyTSVFormat) -> pd.DataFrame:
+    
+    dataframe = pd.read_csv(str(ff), sep='\t', index_col=0)
+
+    return dataframe.transpose()

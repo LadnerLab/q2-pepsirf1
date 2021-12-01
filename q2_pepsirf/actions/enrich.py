@@ -72,5 +72,13 @@ def enrich(
         #run command
         subprocess.run(cmd, shell=True, check=True)
 
+        # check if failure file exists
+        failed = (dir_fmt_output.path/"failedEnrichment.txt")
+
+        # if file doesn't exist create empty file
+        if not failed.exists():
+            with failed.open("w") as fh:
+                pass
+
         #return enrich directory as qza
         return dir_fmt_output

@@ -44,6 +44,10 @@ class PeptideIDListFmt(model.TextFileFormat):
                         'TXT file is empty, not a '
                         'enriched peptides file.')
 
+class EnrichmentFailureFmt(model.TextFileFormat):
+    def _validate_( self, level='min'):
+        pass
+
 class EnrichedPeptideDirFmt(model.DirectoryFormat):
     pairwise = model.FileCollection(
         r'.+~.+_enriched\.txt',
@@ -51,6 +55,11 @@ class EnrichedPeptideDirFmt(model.DirectoryFormat):
     @pairwise.set_path_maker
     def pairwise_pathmaker(self, a, b):
         return f'{a}~{b}_enriched.txt'
+    
+    failures = model.File(
+        'failedEnrichment.txt',
+        format=EnrichmentFailureFmt
+    )
 
 class ZscoreNanFormat(model.TextFileFormat):
     def _validate_(self, level='min'):

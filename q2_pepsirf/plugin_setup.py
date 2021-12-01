@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import importlib
+import q2_pepsirf
 
 from qiime2.plugin import (Plugin,
                         SemanticType,
@@ -38,7 +39,7 @@ import q2_pepsirf.actions.bin as bin
 from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
 
-plugin = Plugin("pepsirf", version='0.0.1.dev',
+plugin = Plugin("pepsirf", version=q2_pepsirf.__version__,
                 website="https://github.com/LadnerLab/q2-pepsirf")
 
 plugin.register_formats(PepsirfContingencyTSVFormat,
