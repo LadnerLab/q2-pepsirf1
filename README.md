@@ -13,7 +13,7 @@ Visit: https://github.com/LadnerLab/PepSIRF for installation documentation on Pe
 
 ### q2-pepsirf installation:
 #### Dependencies:
-- `qiime2`
+- `qiime2-2021.11 +`
 - `PepSIRF`
 
 #### Directions:
