@@ -20,10 +20,10 @@ Visit: https://github.com/LadnerLab/PepSIRF for installation documentation on Pe
 Make sure your Qiime2 conda environment is activated by running the command:
   
 ```
-conda activate qiime2-2021.8
+conda activate qiime2-2021.11
 ```
 
-You can replace `qiime2-2021.8` above with whichever version of QIIME 2 you have currently installed.
+You can replace `qiime2-2021.11` above with whichever version of QIIME 2 you have currently installed.
 
 Now you are ready to install q2-pepsirf. Run the following commands:
 
