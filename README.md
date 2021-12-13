@@ -1,6 +1,8 @@
 # q2-pepsirf
 Qiime2 Plug-in for the use of pepsirf within qiime.
 
+https://ladnerlab.github.io/pepsirf-q2-plugin-docs/
+
 ## Installation
 
 ### Qiime2 Installation:
