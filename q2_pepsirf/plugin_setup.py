@@ -40,7 +40,8 @@ from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
 
 plugin = Plugin("pepsirf", version=q2_pepsirf.__version__,
-                website="https://github.com/LadnerLab/q2-pepsirf")
+                website="https://github.com/LadnerLab/q2-pepsirf1",
+                description="Qiime2 Plug-in for the use of pepsirf within qiime.")
 
 plugin.register_formats(PepsirfContingencyTSVFormat,
                         PepsirfContingencyTSVDirFmt,
