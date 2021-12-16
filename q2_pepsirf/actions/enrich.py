@@ -48,7 +48,8 @@ def enrich(
         #create threshold file if not provided
         if not thresh_file:
 
-            with open(threshFile, 'w', newline='') as out_file:
+            #create a temporary thresh file in the temporary directory
+            with open(os.path.join(tempdir, threshFile), 'w', newline='') as out_file:
                     tsv_writer = csv.writer(out_file, delimiter='\t')
                     tsv_writer.writerow([str(zscores), exact_z_thresh])
         
