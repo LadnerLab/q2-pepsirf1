@@ -19,29 +19,12 @@ Visit: https://github.com/LadnerLab/PepSIRF for installation documentation on Pe
 - `PepSIRF`
 
 #### Directions:
-Make sure your Qiime2 conda environment is activated by running the command:
-  
-```
-conda activate qiime2-2021.11
-```
 
-You can replace `qiime2-2021.11` above with whichever version of QIIME 2 you have currently installed.
-
-Now you are ready to install q2-pepsirf. Run the following commands:
-
-```
-pip install git+https://github.com/LadnerLab/q2-pepsirf.git
-```
-
-Run `qiime info` to check for a successful installation. If installation was successful, you should see `pepsirf: version` in the list of installed plugins.
+Visit: https://ladnerlab.github.io/pepsirf-q2-plugin-docs/Pepsirf_Plugins/q2-pepsirf1/ for installation documentation on q2-pepsirf.
 
 #### Update q2-pepsirf:
 
-To update q2-pepsirf, run the following command:
-
-```
-pip install -U git+https://github.com/LadnerLab/q2-pepsirf.git
-```
+Visit: https://ladnerlab.github.io/pepsirf-q2-plugin-docs/Pepsirf_Plugins/q2-pepsirf1/#updating for updating documentation on q2-pepsirf.
 
 ## Qiime Import
 #### Raw Data Example:
