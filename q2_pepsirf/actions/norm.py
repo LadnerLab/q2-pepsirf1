@@ -20,7 +20,7 @@ def norm(
         peptide_scores = "'%s'" % os.path.abspath(str(peptide_scores))
 
     if negative_control:
-        negative_control = "'%s'" % os.path.abspath(negative_control)
+        negative_control = "'%s'" % os.path.abspath(str(negative_control))
 
     if os.path.isfile(pepsirf_binary):
         pepsirf_binary = "'%s'" % (os.path.abspath(pepsirf_binary))
