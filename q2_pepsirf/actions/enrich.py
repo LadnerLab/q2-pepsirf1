@@ -20,7 +20,9 @@ def enrich(
     source: qiime2.CategoricalMetadataColumn,
     thresh_file: EnrichThreshFileFormat = None,
     zscores: PepsirfContingencyTSVFormat = None,
+    col_sum: PepsirfContingencyTSVFormat = None,
     exact_z_thresh: str = None,
+    exact_cs_thresh: str = None,
     raw_scores: PepsirfContingencyTSVFormat = None,
     raw_constraint: int = None,
     enrichment_failure: bool = False,
@@ -52,6 +54,7 @@ def enrich(
             with open(threshFile, 'w', newline='') as out_file:
                     tsv_writer = csv.writer(out_file, delimiter='\t')
                     tsv_writer.writerow([str(zscores), exact_z_thresh])
+                    tsv_writer.writerow([str(col_sum), exact_cs_thresh])
         
         else:
             threshFile = str(thresh_file)
@@ -71,7 +74,7 @@ def enrich(
             cmd += " --output_filename_truncate"
 
         #run command
-        subprocess.run(cmd, shell=True, check=True)
+        subprocess.run(cmd, shell=True, check=False)
 
         # check if failure file exists
         failed = (dir_fmt_output.path/"failedEnrichment.txt")
