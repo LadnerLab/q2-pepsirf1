@@ -201,7 +201,8 @@ plugin.methods.register_function(
         inputs={
                 'zscores': FeatureTable[Zscore],
                 'raw_scores': FeatureTable[RawCounts],
-                'thresh_file': EnrichThresh
+                'thresh_file': EnrichThresh,
+                'col_sum': FeatureTable[Normed]
 
         },
         parameters={
@@ -210,7 +211,8 @@ plugin.methods.register_function(
                 'enrichment_failure': Bool,
                 'truncate': Bool,
                 'pepsirf_binary': Str,
-                'source': MetadataColumn[Categorical]
+                'source': MetadataColumn[Categorical],
+                'exact_cs_thresh': Str
         },
         outputs=[
                 ('dir_fmt_output', PairwiseEnrichment)
@@ -218,13 +220,16 @@ plugin.methods.register_function(
         input_descriptions={
                 'zscores': "FeatureTable containing z scores of the normalized read counts. "
                         "Fist column header must be 'Sequence Name' as produced by pepsirf.",
+                'col_sum': "FeatureTable containing the normalized read counts. "
+                        "Fist column header must be 'Sequence Name' as produced by pepsirf.",
                 'raw_scores': "This matrix must contain the raw counts for each Peptide for every sample of "
                         "interest. If included, '--raw_score_constraint' must also be specified.",
                 'thresh_file': " The name of a tab-delimited file containing one tab-delimited matrix filename "
                         "and threshold(s), one per line. If providing more than z score matrix."
         },
         parameter_descriptions={
-                'exact_z_thresh': "Exact z score thresholds either individual or combined.",
+                'exact_z_thresh': "Exact z score thresholds.",
+                'exact_cs_thresh': "Exact col-sum threholds.",
                 'raw_constraint': "The minimum total raw count across all peptides for a sample to be "
                                 "included in the analysis.This provides a way to impose a minimum read "
                                 "count for a sample to be evaluated.",
