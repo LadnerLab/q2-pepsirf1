@@ -1,6 +1,6 @@
 from posixpath import abspath
 import subprocess, os, csv
-import tempfile, qiime2
+import tempfile, qiime2, itertools
 
 from q2_pepsirf.format_types import (
     EnrichedPeptideDirFmt, 
@@ -9,12 +9,17 @@ from q2_pepsirf.format_types import (
     )
 
 #function used to take source metadata and create pairs files
-def _make_pairs_file(column, outpath):
+def _make_pairs_list(column, outpath):
     series = column.to_series()
     pairs = {k: v.index for k,v in series.groupby(series)}
+    result = []
+    for _, ids in pairs.items():
+        result.append(list(itertools.combinations(ids, 2)))
     with open(outpath, 'w') as fh:
-        for _, ids in pairs.items():
-            fh.write('\t'.join(ids) + '\n')
+        for pair in result:
+            for a, b in pair:
+                fh.write(a + '\t' + b + '\n')
+    return result
 
 def enrich(
     source: qiime2.CategoricalMetadataColumn,
@@ -41,7 +46,7 @@ def enrich(
 
         #make pairs file with given source metadata
         pairsFile = os.path.join(tempdir, 'pairs.tsv')
-        _make_pairs_file(source, pairsFile)
+        _make_pairs_list(source, pairsFile)
 
         #set up default threshold files and peptide enrichment suffix
         threshFile = os.path.join(tempdir, "tempThreshFile.tsv")
