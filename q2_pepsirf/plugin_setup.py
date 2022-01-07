@@ -115,6 +115,7 @@ plugin.methods.register_function(
                 'negative_names': List[Str],
                 'precision': Int % Range(0, None),
                 'pepsirf_binary': Str,
+                'outfile': Str
         },
         outputs=[
                 ('qza_output', FeatureTable[T_out])
