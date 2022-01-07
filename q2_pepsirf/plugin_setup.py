@@ -266,7 +266,8 @@ plugin.methods.register_function(
         },
         parameters={
                 'get': Str%Choices("samples", "probes"),
-                'pepsirf_binary': Str
+                'pepsirf_binary': Str,
+                'outfile': Str
         },
         outputs=[
                 ('snpn_output', InfoSNPN)
@@ -276,7 +277,8 @@ plugin.methods.register_function(
         },
         parameter_descriptions={
                 'get': "Specify weather you want to collect sample names or probe/peptide names",
-                'pepsirf_binary': "The binary to call pepsirf on your system."
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'snpn_output':"InfoSNPN file in the form of a file with no header, one sample name per line."
@@ -293,7 +295,8 @@ plugin.methods.register_function(
                         | RawCounts | NormedDiffRatio | NormedSized],
         },
         parameters={
-                'pepsirf_binary': Str
+                'pepsirf_binary': Str,
+                'outfile': Str
         },
         outputs=[
                 ('sum_of_probes_output', InfoSumOfProbes)
@@ -302,7 +305,8 @@ plugin.methods.register_function(
                 'input': "An input score matrix to gather information from."
         },
         parameter_descriptions={
-                'pepsirf_binary': "The binary to call pepsirf on your system."
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'sum_of_probes_output':"InfoSumOfProbes file, The first entry in each column will be the name of the "

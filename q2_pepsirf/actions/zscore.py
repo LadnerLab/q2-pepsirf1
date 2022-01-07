@@ -11,7 +11,7 @@ def zscore(
     trim: float = 2.5,
     hdi: float = 0.0,
     num_threads: int = 2,
-    outfile: str = "./norm.out",
+    outfile: str = "./zscore.out",
     pepsirf_binary: str = 'pepsirf') -> (PepsirfContingencyTSVFormat, ZscoreNanFormat):
 
     #collect temp file names for zscore output
