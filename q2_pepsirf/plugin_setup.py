@@ -142,7 +142,8 @@ plugin.methods.register_function(
                 'negative_names': "Optional approach for identifying negative controls. "
                                 "Space-separated list of negative control sample names.",
                 'precision': "Output score precision. The scores written to the output will be output to this many decimal places.",
-                'pepsirf_binary': "The binary to call pepsirf on your system."
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'qza_output': "the FeatureTable (.qza) output based on the normalized approach given by user"
@@ -161,7 +162,8 @@ plugin.methods.register_function(
                 'trim': Float % Range(0.0, 100.0),
                 'hdi': Float % Range(0.0, None),
                 'num_threads': Int % Range(1, None),
-                'pepsirf_binary': Str
+                'pepsirf_binary': Str,
+                'outfile': Str
         },
         outputs=[
                 ('zscore_output', FeatureTable[Zscore]),
@@ -182,7 +184,8 @@ plugin.methods.register_function(
                         "example, '--hdi 0.95' would instruct the program to utilize the 95% highest density interval (from each "
                         "bin) for these calculations.",
                 'num_threads': "The number of threads to use for analyses.",
-                'pepsirf_binary': "The binary to call pepsirf on your system."
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'zscore_output': "Name for the output Z scores file. This file will be a FeatureTable[Zscore] with the same "
