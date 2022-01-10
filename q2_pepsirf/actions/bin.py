@@ -11,6 +11,7 @@ def bin(
     allow_other_normalization: bool = False,
     bin_size: int = 300,
     round_to: int = 0,
+    outfile: str = "./bin.out",
     pepsirf_binary: str = "pepsirf") -> PeptideBinFormat:
     
     #collect temp file names for bin output
@@ -28,6 +29,9 @@ def bin(
 
         #collect command line
         cmd = "%s bin -s %s -b %s -r %s -o %s" % (pepsirf_binary, str(scores), str(bin_size), str(round_to), str(bin_out))
+
+        #add outfile to command
+        cmd += ' >> %s' % (outfile)
 
         #run the collected command
         subprocess.run(cmd, shell=True)

@@ -332,7 +332,8 @@ plugin.methods.register_function(
                 'pepsirf_binary': Str,
                 'bin_size': Int % Range(1, None),
                 'round_to': Int % Range(0, None),
-                'allow_other_normalization': T_flag
+                'allow_other_normalization': T_flag,
+                'outfile': Str
         },
         outputs=[
                 ('bin_output', T_out)
@@ -353,7 +354,8 @@ plugin.methods.register_function(
                         "binning. Scores found in the matrix will be rounded to the nearest 1/10^x for a "
                         "rounding factor x. For example, a rounding factor of 0 will result in rounding "
                         "to the nearest integer, while a rounding factor of 1 will result in rounding to "
-                        "the nearest tenth."
+                        "the nearest tenth.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'bin_output':"PeptideBins file that contains  one bin per line and each "
