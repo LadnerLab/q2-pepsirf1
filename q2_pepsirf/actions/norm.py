@@ -10,6 +10,7 @@ def norm(
     negative_id: str = None,
     negative_names: list = None,
     precision: int = 2,
+    outfile: str = "./norm.out",
     pepsirf_binary: str = "pepsirf") -> PepsirfContingencyTSVFormat:
     
     #collect filepath for TSVFormat
@@ -41,6 +42,9 @@ def norm(
             cmd += ' -s %s' % (negative_id)
         if negative_names:
             cmd += ' -n %s' % (','.join(negative_names))
+
+        #add outfile to command
+        cmd += ' >> %s' % (outfile)
 
         #run command in the command line
         subprocess.run(cmd, shell=True)

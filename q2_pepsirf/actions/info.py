@@ -15,6 +15,7 @@ from q2_pepsirf.format_types import(
 def infoSNPN(
     input: PepsirfContingencyTSVFormat,
     get: str,
+    outfile: str = "./info.out",
     pepsirf_binary: str = "pepsirf") -> PepsirfInfoSNPNFormat:
 
     #create PepsirfInfoSNPNFormat output
@@ -33,6 +34,9 @@ def infoSNPN(
         elif get == "probes":
             cmd = "%s info -i %s -p %s" % (pepsirf_binary, str(input), str(snpn_out))
 
+        #add outfile to command
+        cmd += ' >> %s' % (outfile)
+
         #run command
         subprocess.run(cmd, shell=True)
 
@@ -41,6 +45,7 @@ def infoSNPN(
         
 def infoSumOfProbes(
     input: PepsirfContingencyTSVFormat,
+    outfile: str = "./info.out",
     pepsirf_binary: str = "pepsirf") -> PepsirfInfoSumOfProbesFmt:
 
     #create PepsirfInfoSumOfProbesFmt output
@@ -55,6 +60,9 @@ def infoSumOfProbes(
 
         #put together command
         cmd = "%s info -i %s -c %s" % (pepsirf_binary, str(input), str(sum_of_probes_out))
+
+        #add outfile to command
+        cmd += ' >> %s' % (outfile)
 
         #run command
         subprocess.run(cmd, shell=True)

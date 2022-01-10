@@ -115,6 +115,7 @@ plugin.methods.register_function(
                 'negative_names': List[Str],
                 'precision': Int % Range(0, None),
                 'pepsirf_binary': Str,
+                'outfile': Str
         },
         outputs=[
                 ('qza_output', FeatureTable[T_out])
@@ -141,7 +142,8 @@ plugin.methods.register_function(
                 'negative_names': "Optional approach for identifying negative controls. "
                                 "Space-separated list of negative control sample names.",
                 'precision': "Output score precision. The scores written to the output will be output to this many decimal places.",
-                'pepsirf_binary': "The binary to call pepsirf on your system."
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'qza_output': "the FeatureTable (.qza) output based on the normalized approach given by user"
@@ -160,7 +162,8 @@ plugin.methods.register_function(
                 'trim': Float % Range(0.0, 100.0),
                 'hdi': Float % Range(0.0, None),
                 'num_threads': Int % Range(1, None),
-                'pepsirf_binary': Str
+                'pepsirf_binary': Str,
+                'outfile': Str
         },
         outputs=[
                 ('zscore_output', FeatureTable[Zscore]),
@@ -181,7 +184,8 @@ plugin.methods.register_function(
                         "example, '--hdi 0.95' would instruct the program to utilize the 95% highest density interval (from each "
                         "bin) for these calculations.",
                 'num_threads': "The number of threads to use for analyses.",
-                'pepsirf_binary': "The binary to call pepsirf on your system."
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'zscore_output': "Name for the output Z scores file. This file will be a FeatureTable[Zscore] with the same "
@@ -212,7 +216,8 @@ plugin.methods.register_function(
                 'truncate': Bool,
                 'pepsirf_binary': Str,
                 'source': MetadataColumn[Categorical],
-                'exact_cs_thresh': Str
+                'exact_cs_thresh': Str,
+                'outfile': Str
         },
         outputs=[
                 ('dir_fmt_output', PairwiseEnrichment)
@@ -244,7 +249,8 @@ plugin.methods.register_function(
                         "used, the output names will be of the form 'A~B~C~1more', for example.",
                 'pepsirf_binary': "The binary to call pepsirf on your system.",
                 'source': "Metadata file containing all sample names and their source groups. "
-                        "Used to create pairs tsv to run pepsirf enrich module."
+                        "Used to create pairs tsv to run pepsirf enrich module.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'dir_fmt_output': "Directory formatted qza containing lists of enriched peptides"
@@ -262,7 +268,8 @@ plugin.methods.register_function(
         },
         parameters={
                 'get': Str%Choices("samples", "probes"),
-                'pepsirf_binary': Str
+                'pepsirf_binary': Str,
+                'outfile': Str
         },
         outputs=[
                 ('snpn_output', InfoSNPN)
@@ -272,7 +279,8 @@ plugin.methods.register_function(
         },
         parameter_descriptions={
                 'get': "Specify weather you want to collect sample names or probe/peptide names",
-                'pepsirf_binary': "The binary to call pepsirf on your system."
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'snpn_output':"InfoSNPN file in the form of a file with no header, one sample name per line."
@@ -289,7 +297,8 @@ plugin.methods.register_function(
                         | RawCounts | NormedDiffRatio | NormedSized],
         },
         parameters={
-                'pepsirf_binary': Str
+                'pepsirf_binary': Str,
+                'outfile': Str
         },
         outputs=[
                 ('sum_of_probes_output', InfoSumOfProbes)
@@ -298,7 +307,8 @@ plugin.methods.register_function(
                 'input': "An input score matrix to gather information from."
         },
         parameter_descriptions={
-                'pepsirf_binary': "The binary to call pepsirf on your system."
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'sum_of_probes_output':"InfoSumOfProbes file, The first entry in each column will be the name of the "
@@ -322,7 +332,8 @@ plugin.methods.register_function(
                 'pepsirf_binary': Str,
                 'bin_size': Int % Range(1, None),
                 'round_to': Int % Range(0, None),
-                'allow_other_normalization': T_flag
+                'allow_other_normalization': T_flag,
+                'outfile': Str
         },
         outputs=[
                 ('bin_output', T_out)
@@ -343,7 +354,8 @@ plugin.methods.register_function(
                         "binning. Scores found in the matrix will be rounded to the nearest 1/10^x for a "
                         "rounding factor x. For example, a rounding factor of 0 will result in rounding "
                         "to the nearest integer, while a rounding factor of 1 will result in rounding to "
-                        "the nearest tenth."
+                        "the nearest tenth.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'bin_output':"PeptideBins file that contains  one bin per line and each "

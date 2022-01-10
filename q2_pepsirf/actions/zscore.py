@@ -11,6 +11,7 @@ def zscore(
     trim: float = 2.5,
     hdi: float = 0.0,
     num_threads: int = 2,
+    outfile: str = "./zscore.out",
     pepsirf_binary: str = 'pepsirf') -> (PepsirfContingencyTSVFormat, ZscoreNanFormat):
 
     #collect temp file names for zscore output
@@ -34,6 +35,9 @@ def zscore(
             pepsirf_binary, str(scores),
             str(bins), str(trim), str(hdi), str(zscore_output),
             str(nan_report), str(num_threads))
+
+        #add outfile to end of command
+        cmd += ' >> %s' % (outfile)
 
         #run the collected command
         subprocess.run(cmd, shell=True)
