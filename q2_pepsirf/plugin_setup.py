@@ -216,7 +216,8 @@ plugin.methods.register_function(
                 'truncate': Bool,
                 'pepsirf_binary': Str,
                 'source': MetadataColumn[Categorical],
-                'exact_cs_thresh': Str
+                'exact_cs_thresh': Str,
+                'outfile': Str
         },
         outputs=[
                 ('dir_fmt_output', PairwiseEnrichment)
@@ -248,7 +249,8 @@ plugin.methods.register_function(
                         "used, the output names will be of the form 'A~B~C~1more', for example.",
                 'pepsirf_binary': "The binary to call pepsirf on your system.",
                 'source': "Metadata file containing all sample names and their source groups. "
-                        "Used to create pairs tsv to run pepsirf enrich module."
+                        "Used to create pairs tsv to run pepsirf enrich module.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
         },
         output_descriptions={
                 'dir_fmt_output': "Directory formatted qza containing lists of enriched peptides"

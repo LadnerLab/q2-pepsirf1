@@ -32,6 +32,7 @@ def enrich(
     raw_constraint: int = None,
     enrichment_failure: bool = False,
     truncate: bool = False,
+    outfile: str = "./enrich.out",
     pepsirf_binary: str = "pepsirf") -> EnrichedPeptideDirFmt:
 
     #create EnrichedPeptideDirFmt output
@@ -77,6 +78,10 @@ def enrich(
             cmd += " -f %s" % (enrichment_failure)
         if truncate:
             cmd += " --output_filename_truncate"
+
+
+        #add outfile to command
+        cmd += ' >> %s' % (outfile)
 
         #run command
         subprocess.run(cmd, shell=True, check=False)
