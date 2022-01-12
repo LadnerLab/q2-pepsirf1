@@ -94,5 +94,10 @@ def enrich(
             with failed.open("w") as fh:
                 pass
 
+        # check if the only file is failed
+        # dir_fmt_output.path.iterdir() or #... .path.glob('*_enriched.txt')
+        if len(list(dir_fmt_output.path.iterdir())) <= 1:
+            raise ValueError("No enriched peptides.")
+
         #return enrich directory as qza
         return dir_fmt_output
