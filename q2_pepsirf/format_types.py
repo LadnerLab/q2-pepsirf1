@@ -50,11 +50,11 @@ class EnrichmentFailureFmt(model.TextFileFormat):
 
 class EnrichedPeptideDirFmt(model.DirectoryFormat):
     pairwise = model.FileCollection(
-        r'.+~.+_enriched\.txt',
+        r'.+_enriched\.txt',
         format=PeptideIDListFmt)
     @pairwise.set_path_maker
-    def pairwise_pathmaker(self, a, b):
-        return f'{a}~{b}_enriched.txt'
+    def pairwise_pathmaker(self, comparisons):
+        return f'{"~".join(comparisons)}_enriched.txt'
     
     failures = model.File(
         'failedEnrichment.txt',
