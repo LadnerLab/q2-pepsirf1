@@ -27,7 +27,7 @@ from q2_pepsirf.format_types import (
     PeptideBinDirFmt, PeptideBins, PepsirfInfoSumOfProbesDirFmt,
     PepsirfInfoSumOfProbesFmt, InfoSumOfProbes, PepsirfInfoSNPNFormat,
     PepsirfInfoSNPNDirFmt, InfoSNPN, EnrichThresh, EnrichThreshFileDirFmt,
-    EnrichThreshFileFormat
+    EnrichThreshFileFormat, SubjoinMultiFileFmt, SubjoinMultiFileDirFmt, MultiFile
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
@@ -35,6 +35,7 @@ import q2_pepsirf.actions.enrich as enrich
 import q2_pepsirf.actions.info as info
 import q2_pepsirf.actions.norm as norm
 import q2_pepsirf.actions.bin as bin
+import q2_pepsirf.actions.subjoin as subjoin
 
 from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
@@ -56,7 +57,9 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         PepsirfInfoSumOfProbesDirFmt,
                         PepsirfInfoSumOfProbesFmt,
                         EnrichThreshFileFormat,
-                        EnrichThreshFileDirFmt)
+                        EnrichThreshFileDirFmt,
+                        SubjoinMultiFileFmt,
+                        SubjoinMultiFileDirFmt)
 
 plugin.register_semantic_types(
         Normed, NormedDifference, NormedDiffRatio,
@@ -91,6 +94,10 @@ plugin.register_semantic_type_to_format(
 plugin.register_semantic_type_to_format(
         EnrichThresh,
         EnrichedPeptideDirFmt
+)
+plugin.register_semantic_type_to_format(
+        MultiFile,
+        SubjoinMultiFileDirFmt
 )
 
 T_approach, T_out = TypeMap ({
@@ -363,5 +370,81 @@ plugin.methods.register_function(
         },
         name='pepsirf bin module',
         description="Creates groups of peptides with similar starting abundances with pepsirf's bin module"
+)
+
+s_approach, s_out = TypeMap ({
+        Str%Choices("raw"): RawCounts,
+        Str%Choices("col_sum"): Normed,
+        Str%Choices("diff"): NormedDifference,
+        Str%Choices("diff_ratio"): NormedDiffRatio,
+        Str%Choices("ratio"): NormedRatio,
+        Str%Choices("size_factors"): NormedSized
+})
+
+plugin.methods.register_function(
+        function=subjoin.subjoin,
+        inputs={
+                'multi_file': MultiFile
+        },
+        parameters={
+                'pepsirf_binary': Str,
+                'input_type': s_approach,
+                'outfile': Str,
+                'subjoin_input': Str, 
+                'filter_peptide_names': Bool,
+                'duplicate_evaluation': Str%Choices("include", "combine", "ignore")
+        },
+        outputs=[
+                ('subjoin_output', s_out)
+        ],
+        input_descriptions={
+                'multi_file': "The name of a tab-delimited file containing score matrix and sample name "
+                        "list filename pairs, one per line. Each of these pairs must be a score "
+                        "matrix and a file containing the names of samples (or peptides, if "
+                        "specified) to keep from the input the score matrix. The score matrix "
+                        "should be of the format output by the demux module, with sample names on "
+                        "the columns and peptide names on the rows. The namelist must have one "
+                        "name per line, but can optionally have 2, if renaming samples in the "
+                        "subjoin output. Optionally, a name list can be omitted if all samples "
+                        "from the input matrix should be included in the output."
+        },
+        parameter_descriptions={
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'input_type': "Specify the type of file being inputted into subjoin, in order to produce the correct "
+                        "output file format type. raw = FeatureTable[RawCounts], col_sum = FeatureTable[Normed], etc.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF.",
+                'subjoin_input': " Comma-separated filenames (For example: "
+                                "score_matrix.tsv,sample_names.txt ). Each of these pairs must be a score "
+                                "matrix and a file containing the names of samples (or peptides, if "
+                                "specified) to keep in the score matrix. The score matrix should be of "
+                                "the format output by the demux module, with sample names on the columns "
+                                "and peptide names on the rows. The namelist must have one name per line, "
+                                "but can optionally have 2. If 2 tab-delimited names are included on one "
+                                "line, the name in the first column should match the name in the input "
+                                "matrix file, while the name in the second column will be output. "
+                                "Therefore, this allows for the renaming of samples in the output. To use "
+                                "multiple name lists with multiple score matrices, include this argument "
+                                "multiple times. Optionally, a name list can be omitted if all samples "
+                                "from the input matrix should be included in the output.",
+                'filter_peptide_names':"Flag to include if the name lists input to the input or multi_file "
+                                        "options should be treated as peptide (i.e. row) names instead of sample "
+                                        "(i.e. column) names. With the inclusion of this flag, the input files "
+                                        "will be filtered on peptide names (rows) instead of sample names (column).",
+                'duplicate_evaluation': "Defines what should be done when sample or peptide names are not unique "
+                                        "across files being joined. Currently, three different duplicate "
+                                        "evaluation strategies are available: - combine: Combine (with addition) the values "
+                                        "associated with identical sample/peptide names from different files. "
+                                        "- include: Include each duplicate, adding a suffix to the duplicate "
+                                        "name detailing the file from which the sample came. - ignore: Ignore the possibility "
+                                        "of duplicates. Behavior is undefined when duplicates are  encountered in this "
+                                        "mode Therefore, this mode is not recommended."
+        },
+        output_descriptions={
+                'subjoin_output':"Name for the output score matrix file. The output will be in the form of "
+                                "the input, but with only the specified values (samplenames or peptides) "
+                                "found in the namelists."
+        },
+        name='pepsirf subjoin module',
+        description="Manipulate matrix files with pepsirf's subjoin module"
 )
 importlib.import_module("q2_pepsirf.transformers")

@@ -20,6 +20,7 @@ PeptideBins = SemanticType('PeptideBins')
 InfoSNPN = SemanticType('InfoSNPN')
 InfoSumOfProbes = SemanticType('InfoSumOfProbes')
 EnrichThresh = SemanticType('EnrichThresh')
+MultiFile = SemanticType('MultiFile')
 
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
@@ -127,3 +128,16 @@ EnrichThreshFileDirFmt = model.SingleFileDirectoryFormat(
     'EnrichThreshFileDirFmt',
     '_thresh.tsv',
     EnrichThreshFileFormat)
+
+class SubjoinMultiFileFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        '.txt file is empty.')
+
+SubjoinMultiFileDirFmt = model.SingleFileDirectoryFormat(
+    'SubjoinMultiFileDirFmt',
+    'multifile.txt',
+    SubjoinMultiFileFmt)
