@@ -51,6 +51,7 @@ qiime tools import --input-path rawData.tsv \
 | Num. of Samples | PepsirfInfoSNPNFormat | 'InfoSNPN' |
 | Num. of Peptides | PepsirfInfoSNPNFormat | 'InfoSNPN' |
 | Sum of Probes | PepsirfInfoSumOfProbesFmt | 'InfoSumOfProbes' | 
+| Multi-File | SubjoinMultiFileFmt | 'MultiFile' |
 
 ## Qiime Export
 #### Raw Data Example:
