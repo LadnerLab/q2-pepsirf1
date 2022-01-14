@@ -29,7 +29,7 @@ def norm(
     #create a temp directory to run pepsirf in
     with tempfile.TemporaryDirectory() as tempdir:
 
-        #start command with required/defualt parameterst
+        #start command with required/defualt parameters
         cmd = '%s norm -a %s --precision %s -o %s -p %s' % (
             pepsirf_binary, normalize_approach, str(precision),
             str(tsv_output), str(peptide_scores)
