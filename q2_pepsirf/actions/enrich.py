@@ -84,7 +84,11 @@ def enrich(
         cmd += ' >> %s' % (outfile)
 
         #run command
-        subprocess.run(cmd, shell=True, check=False)
+        s = subprocess.run(cmd, shell=True, check=True)
+
+        #check exit code and raise error if not 0
+        if s.returncode > 0:
+            raise ValueError("Enrich module failed. Exit code %s." % (str(s.returncode)))
 
         # check if failure file exists
         failed = (dir_fmt_output.path/"failedEnrichment.txt")
