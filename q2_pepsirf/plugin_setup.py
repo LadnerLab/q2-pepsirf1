@@ -27,7 +27,9 @@ from q2_pepsirf.format_types import (
     PeptideBinDirFmt, PeptideBins, PepsirfInfoSumOfProbesDirFmt,
     PepsirfInfoSumOfProbesFmt, InfoSumOfProbes, PepsirfInfoSNPNFormat,
     PepsirfInfoSNPNDirFmt, InfoSNPN, EnrichThresh, EnrichThreshFileDirFmt,
-    EnrichThreshFileFormat, SubjoinMultiFileFmt, SubjoinMultiFileDirFmt, MultiFile
+    EnrichThreshFileFormat, SubjoinMultiFileFmt, SubjoinMultiFileDirFmt, MultiFile,
+    ProteinFasta, ProteinFastaFmt, ProteinFastaDirFmt, PeptideFasta, PeptideFastaFmt,
+    PeptideFastaDirFmt, Link, PepsirfLinkTSVFormat, PepsirfLinkTSVDirFmt
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
@@ -36,6 +38,7 @@ import q2_pepsirf.actions.info as info
 import q2_pepsirf.actions.norm as norm
 import q2_pepsirf.actions.bin as bin
 import q2_pepsirf.actions.subjoin as subjoin
+import q2_pepsirf.actions.link as link
 
 from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
@@ -59,7 +62,13 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         EnrichThreshFileFormat,
                         EnrichThreshFileDirFmt,
                         SubjoinMultiFileFmt,
-                        SubjoinMultiFileDirFmt)
+                        SubjoinMultiFileDirFmt,
+                        ProteinFastaFmt,
+                        ProteinFastaDirFmt,
+                        PeptideFastaFmt,
+                        PeptideFastaDirFmt,
+                        PepsirfLinkTSVFormat,
+                        PepsirfLinkTSVDirFmt)
 
 plugin.register_semantic_types(
         Normed, NormedDifference, NormedDiffRatio,
@@ -98,6 +107,18 @@ plugin.register_semantic_type_to_format(
 plugin.register_semantic_type_to_format(
         MultiFile,
         SubjoinMultiFileDirFmt
+)
+plugin.register_semantic_type_to_format(
+        ProteinFasta,
+        ProteinFastaDirFmt
+)
+plugin.register_semantic_type_to_format(
+        PeptideFasta,
+        PeptideFastaDirFmt
+)
+plugin.register_semantic_type_to_format(
+        Link,
+        PepsirfLinkTSVDirFmt
 )
 
 T_approach, T_out = TypeMap ({
@@ -446,5 +467,50 @@ plugin.methods.register_function(
         },
         name='pepsirf subjoin module',
         description="Manipulate matrix files with pepsirf's subjoin module"
+)
+
+plugin.methods.register_function(
+        function=link.link,
+        inputs={
+                'protein_file': ProteinFasta,
+                'peptide_file': PeptideFasta
+        },
+        parameters={
+                'pepsirf_binary': Str,
+                'outfile': Str,
+                'meta': Str,
+                'kmer_size': Int,
+                'kmer_redundancy_control': Bool,
+        },
+        outputs=[
+                ('link_output', Link)
+        ],
+        input_descriptions={
+                'protein_file': "Name of fasta file containing protein sequences of interest.",
+                'peptide_file': " Name of fasta file containing aa peptides of interest. These will generally be "
+                                "peptides that are contained in a particular assay."
+        },
+        parameter_descriptions={
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF.",
+                'meta': "Optional method for providing taxonomic information for each protein contained "
+                        "in '--protein_file'. Three comma-separated strings should be provided: 1) name "
+                        "of tab-delimited metadata file, 2) header for column containing protein "
+                        "sequence name and 3) header for column containing ID to be used in creating"
+                        "the linkage map.",
+                'kmer_size':"Kmer size to use when creating the linkage map.",
+                'kmer_redundancy_control': "Optional modification to the way scores are calculated. If this flag is used, "
+                                        "then instead of a peptide receiving one point for each kmer it shares with "
+                                        "proteins of a given taxonomic group, it receives 1 / ( the number of times the "
+                                        "kmer appears in the provided peptides ) points."
+        },
+        output_descriptions={
+                'link_output':"Name of the file to which output is written. Output will be in the form of a "
+                        "tab-delimited file with a header. Each entry/row will be of the form: "
+                        "peptide_name TAB id:score,id:score, and so on. By default, 'score' is defined "
+                        "as the number of shared kmers."
+        },
+        name='pepsirf link module',
+        description="Defines linkages between taxonomic groups and peptides based on shared kmers with pepsirf's link module"
 )
 importlib.import_module("q2_pepsirf.transformers")

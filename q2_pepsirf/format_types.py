@@ -21,6 +21,9 @@ InfoSNPN = SemanticType('InfoSNPN')
 InfoSumOfProbes = SemanticType('InfoSumOfProbes')
 EnrichThresh = SemanticType('EnrichThresh')
 MultiFile = SemanticType('MultiFile')
+ProteinFasta = SemanticType('ProteinFasta')
+PeptideFasta = SemanticType('PeptideFasta')
+Link = SemanticType('Link')
 
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
@@ -141,3 +144,43 @@ SubjoinMultiFileDirFmt = model.SingleFileDirectoryFormat(
     'SubjoinMultiFileDirFmt',
     'multifile.txt',
     SubjoinMultiFileFmt)
+
+class ProteinFastaFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        '.fasta file is empty.')
+
+ProteinFastaDirFmt = model.SingleFileDirectoryFormat(
+    'ProteinFastaDirFmt',
+    'protein_file.fasta',
+    ProteinFastaFmt)
+
+class PeptideFastaFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        '.faa file is empty.')
+
+PeptideFastaDirFmt = model.SingleFileDirectoryFormat(
+    'PeptideFastaDirFmt',
+    'peptide_file.faa',
+    PeptideFastaFmt)
+
+class PepsirfLinkTSVFormat(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            for _, line in zip(range(1), fh):
+                if not line.startswith('Peptide Name\t'):
+                    raise model.ValidationError(
+                        'TSV does not start with "Peptide Name"')
+
+
+PepsirfLinkTSVDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfLinkTSVDirFmt',
+    'link_output.tsv',
+    PepsirfLinkTSVFormat)
