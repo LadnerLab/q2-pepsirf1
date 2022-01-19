@@ -43,12 +43,12 @@ def norm(
         if negative_names:
             cmd += ' -n %s' % (','.join(negative_names))
 
-        #add outfile to command
-        cmd += ' >> %s' % (outfile)
+    #add outfile to command
+    cmd += ' >> %s' % (outfile)
 
-        #run command in the command line
-        subprocess.run(cmd, shell=True)
+    #run command in the command line
+    subprocess.run(cmd, shell=True)
 
-        #return norm output
-        return tsv_output
+    #return norm output
+    return tsv_output
     
