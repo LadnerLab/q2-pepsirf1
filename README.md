@@ -52,6 +52,9 @@ qiime tools import --input-path rawData.tsv \
 | Num. of Peptides | PepsirfInfoSNPNFormat | 'InfoSNPN' |
 | Sum of Probes | PepsirfInfoSumOfProbesFmt | 'InfoSumOfProbes' | 
 | Multi-File | SubjoinMultiFileFmt | 'MultiFile' |
+| Protein Fasta | ProteinFastaFmt | 'ProteinFasta' |
+| Peptide Fasta | PeptideFastaFmt | 'PeptideFasta' |
+| Link Output | PepsirfLinkTSVFormat | 'Link' |
 
 ## Qiime Export
 #### Raw Data Example:
@@ -78,3 +81,7 @@ qiime tools export --input-path rawData.qza \
 | Num. of Peptides | PepsirfInfoSNPNFormat |
 | Sum of Probes | PepsirfInfoSumOfProbesFmt |
 | Enrichment Directory | EnrichedPeptideDirFmt |
+| Multi-File | SubjoinMultiFileFmt |
+| Protein Fasta | ProteinFastaFmt |
+| Peptide Fasta | PeptideFastaFmt |
+| Link Output | PepsirfLinkTSVFormat |
