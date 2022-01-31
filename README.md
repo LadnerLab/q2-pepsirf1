@@ -55,6 +55,13 @@ qiime tools import --input-path rawData.tsv \
 | Protein Fasta | ProteinFastaFmt | 'ProteinFasta' |
 | Peptide Fasta | PeptideFastaFmt | 'PeptideFasta' |
 | Link Output | PepsirfLinkTSVFormat | 'Link' |
+| Enriched Dir | EnrichedPeptideDirFmt | 'PairwiseEnrichment' |
+| Enriched Peptide List | PeptideIDListFmt | 'PeptideIDList' |
+| .DMP file | PepsirfDMPFormat | 'PepsirfDMP' |
+| Deconv Singluar | PepsirfDeconvSingularFormat | 'DeconvSingular' |
+| Deconv Batch Dir | PepsirfDeconvBatchDirFmt | 'DeconvBatch' |
+| Score Per Round (Deconv) | ScorePerRoundFmt | 'ScorePerRound' |
+| Peptide Assignment Map (Deconv) | PeptideAssignMapDirFmt | 'PeptideAssignmentMap' |
 
 ## Qiime Export
 #### Raw Data Example:
@@ -85,3 +92,9 @@ qiime tools export --input-path rawData.qza \
 | Protein Fasta | ProteinFastaFmt |
 | Peptide Fasta | PeptideFastaFmt |
 | Link Output | PepsirfLinkTSVFormat |
+| Enriched Peptide List | PeptideIDListFmt |
+| .DMP file | PepsirfDMPFormat |
+| Deconv Singluar | PepsirfDeconvSingularFormat |
+| Deconv Batch Dir | PepsirfDeconvBatchDirFmt |
+| Score Per Round (Deconv) | ScorePerRoundFmt |
+| Peptide Assignment Map (Deconv) | PeptideAssignMapDirFmt |
