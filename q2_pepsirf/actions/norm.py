@@ -47,7 +47,7 @@ def norm(
     cmd += ' >> %s' % (outfile)
 
     #run command in the command line
-    subprocess.run(cmd, shell=True)
+    subprocess.run(cmd, shell=True, check=True)
 
     #return norm output
     return tsv_output

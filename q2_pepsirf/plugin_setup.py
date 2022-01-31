@@ -29,7 +29,11 @@ from q2_pepsirf.format_types import (
     PepsirfInfoSNPNDirFmt, InfoSNPN, EnrichThresh, EnrichThreshFileDirFmt,
     EnrichThreshFileFormat, SubjoinMultiFileFmt, SubjoinMultiFileDirFmt, MultiFile,
     ProteinFasta, ProteinFastaFmt, ProteinFastaDirFmt, PeptideFasta, PeptideFastaFmt,
-    PeptideFastaDirFmt, Link, PepsirfLinkTSVFormat, PepsirfLinkTSVDirFmt
+    PeptideFastaDirFmt, Link, PepsirfLinkTSVFormat, PepsirfLinkTSVDirFmt,
+    PeptideIDListDirFmt, PeptideIDList, PepsirfDMP, PepsirfDMPDirFmt, PepsirfDMPFormat,
+    DeconvSingluar, PepsirfDeconvSingularFormat, PepsirfDeconvSingularDirFmt, ScorePerRound,
+    ScorePerRoundFmt, ScorePerRoundDirFmt, PepsirfDeconvBatchDirFmt, DeconvBatch,
+    PeptideAssignMapFormat, PeptideAssignMapDirFmt, PeptideAssignmentMap
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
@@ -39,6 +43,7 @@ import q2_pepsirf.actions.norm as norm
 import q2_pepsirf.actions.bin as bin
 import q2_pepsirf.actions.subjoin as subjoin
 import q2_pepsirf.actions.link as link
+import q2_pepsirf.actions.deconv as deconv
 
 from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
@@ -68,7 +73,17 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         PeptideFastaFmt,
                         PeptideFastaDirFmt,
                         PepsirfLinkTSVFormat,
-                        PepsirfLinkTSVDirFmt)
+                        PepsirfLinkTSVDirFmt,
+                        PeptideIDListDirFmt,
+                        PepsirfDMPFormat,
+                        PepsirfDMPDirFmt,
+                        PepsirfDeconvSingularFormat,
+                        PepsirfDeconvSingularDirFmt,
+                        ScorePerRoundFmt,
+                        ScorePerRoundDirFmt,
+                        PepsirfDeconvBatchDirFmt,
+                        PeptideAssignMapFormat,
+                        PeptideAssignMapDirFmt)
 
 plugin.register_semantic_types(
         Normed, NormedDifference, NormedDiffRatio,
@@ -119,6 +134,30 @@ plugin.register_semantic_type_to_format(
 plugin.register_semantic_type_to_format(
         Link,
         PepsirfLinkTSVDirFmt
+)
+plugin.register_semantic_type_to_format(
+        PeptideIDList,
+        PeptideIDListDirFmt
+)
+plugin.register_semantic_type_to_format(
+        PepsirfDMP,
+        PepsirfDMPDirFmt
+)
+plugin.register_semantic_type_to_format(
+        DeconvSingluar,
+        PepsirfDeconvSingularDirFmt
+)
+plugin.register_semantic_type_to_format(
+        ScorePerRound,
+        ScorePerRoundDirFmt
+)
+plugin.register_semantic_type_to_format(
+        DeconvBatch,
+        PepsirfDeconvBatchDirFmt
+)
+plugin.register_semantic_type_to_format(
+        PeptideAssignmentMap,
+        PeptideAssignMapDirFmt
 )
 
 T_approach, T_out = TypeMap ({
@@ -512,5 +551,171 @@ plugin.methods.register_function(
         },
         name='pepsirf link module',
         description="Defines linkages between taxonomic groups and peptides based on shared kmers with pepsirf's link module"
+)
+
+deconv_shared_inputs = {
+                'linked': Link,
+                'id_name_map': PepsirfDMP
+        }
+
+deconv_shared_parameters = {
+                'pepsirf_binary': Str,
+                'outfile': Str,
+                'threshold': Int,
+                'scoring_strategy': Str%Choices("summation", "integer", "fraction"),
+                'score_filtering': Bool,
+                'score_tie_threshold': Float,
+                'score_overlap_threshold': Float,
+                'single_threaded': Bool
+        }
+
+deconv_shared_input_descript = {
+                'linked': "Name of linkage map to be used for deconvolution. It should be in the "
+                        "format output by the 'link' module.",
+                'id_name_map': "Optional file containing mappings from taxonomic id to taxon name. This file "
+                        "should be formatted like the file 'rankedlineage.dmp' from NCBI. It is "
+                        "recommended to either use this file or a subset of this file that contains all "
+                        "of the taxon ids linked to peptides of interest. If included, the output will "
+                        "contain a column denoting the name of the species as well as the id."
+        }
+
+deconv_shared_parameters_descript = {
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF.",
+                'threshold': "Minimum score that a taxon must obtain in order to be included in the "
+                        "deconvolution report.",
+                'scoring_strategy':"Scoring strategies 'summation', 'integer', or 'fraction' can be specified. "
+                                "By not including this flag, summation scoring will be used by default. "
+                                "The --linked file passed must be of the form created by the link module. "
+                                "This means a file of tab-delimited values, one per line. "
+                                "Each line is of the form peptide_name TAB id:score,id:score, and so on. "
+                                "An error will occurif input is not in this format. For summation scoring, the score "
+                                "assigned to each peptide/ID pair is determined by the ':score' portion of the --linked file. "
+                                "For example, assume a line in the --linked file looks like the following: peptide_1 TAB 123:4,543:8 "
+                                "The IDs '123' and '543' will receive scores of 4 and 8 respectively. "
+                                "For integer scoring, each ID receives a score of 1 for every enriched peptide to which "
+                                "it is linked (':score' is ignored). For fractional scoring, the score is assigned to each "
+                                "peptide/ID pair is defined by 1/n for each peptide, where n is the number of IDs to which a peptide is linked. "
+                                "In this method of scoring peptides, a peptide with fewer linked IDs is worth more points..",
+                'score_filtering': "Include this option if you want filtering to be done by the score of each taxon, rather than the count "
+                                "of linked peptides. If used, any taxon with a score below '--threshold' will be removed from consideration, "
+                                "even if it is the highest scoring taxon. Note that for integer "
+                                "scoring, both score filtering and count filtering (default) "
+                                "are the same. If this flag is not included, then any species whose count falls below '--threshold' will be "
+                                "removed from consideration. Score filtering is best suited for the summation scoring method.",
+                'score_tie_threshold': "Threshold for two species to be evaluated as a tie. Note that this value can be either an integer "
+                                "or a ratio that is in (0,1). When provided as an integer this value dictates the difference in score that "
+                                "is allowed for two taxa to be considered as potentially tied. For example, if this flag is provided with "
+                                "the value 0, then two or more taxa must have the exact same score to be tied. If this flag is provided with "
+                                "the value 4, then the difference between the scores of two taxa must be no "
+                                "greater than 4 to be considered tied. For example, if taxon 1 has a score of 5, and taxon 2 has a score "
+                                "anywhere between the integer values in [1,9], then these species will be considered tied, and their tie "
+                                "will be evaluated as dictated by the specified '--score_overlap_threshold'. If the argument provided to "
+                                "this flag is in (0, 1), then the score for a taxon must be at least this proportion of the score for the "
+                                "highest scoring taxon, to trigger a tie. So if species 1 has the highest score with a score of 9, and "
+                                "species 2 has a score of 5, then this flag must be provided with value >= 4/5 = 0.8 for the species 1 and "
+                                "2 to be considered tied. Note that any values provided to this flag that are in the set { x: x >= 1 } - Z, "
+                                "where Z is the set of integers, will result in an error. So 4.45 is not a valid value, "
+                                "but both 4 and 0.45 are.",
+                'score_overlap_threshold': "Once two species have been determined to be tied, according to '--score_tie_threshold', "
+                                        "they are then evaluated as a tie. To use integer tie evaluation, where species must share an "
+                                        "integer number of peptides, not a ratio of their total peptides, provide this argument with a "
+                                        "value in the interval [1, inf). For ratio tie evaluation, which is used when this argument is "
+                                        "provided with a value in the interval (0,1), two taxon must reciprocally share at least the "
+                                        "specified proportion of peptides to be reported together. For example, suppose species 1 shares "
+                                        "half (0.5) of its peptides with species 2, but species 2 only shares a tenth (0.1) of its "
+                                        "peptides with species 1. These two will only be reported together if score_overlap_threshold' <= 0.1.",
+                'single_threaded': "By default this module uses two threads. Include this option with no arguments "
+                                "if you only want only one thread to be used."
+        }
+
+plugin.methods.register_function(
+        function=deconv.deconv_singluar,
+        inputs={
+                'enriched': PeptideIDList,
+                **deconv_shared_inputs
+        },
+        parameters=deconv_shared_parameters,
+        outputs=[
+                ('deconv_output', DeconvSingluar),
+                ('score_per_round', ScorePerRound)
+        ],
+        input_descriptions={
+                'enriched': "single file containing the names of enriched peptides, one per line. "
+                        "Each peptide contained in this file (or files) should have a corresponding "
+                        "entry in the '--linked' input file.",
+                **deconv_shared_input_descript
+        },
+        parameter_descriptions=deconv_shared_parameters_descript,
+        output_descriptions={
+                'deconv_output':"Name of the file to which output is written. Output will be in the form of a "
+                        "tab-delimited file with a header.",
+                'score_per_round':"Name of directory to write counts/scores to after every round. If "
+                                "included, the counts and scores for all remaining taxa will be recorded after "
+                                "every round. Filenames will be written in the format '$dir/round_x', where x "
+                                "is the round number. The original scores will be written to "
+                                "'$dir/round_0'. A new file will be written to the directory after each "
+                                "subsequent round. If this flag is included and the specified directory "
+                                "exists, the program will exit with an error."
+        },
+        name='pepsirf deconv singular mode module',
+        description="converts a list of enriched peptides into a parsimony-based list of likely taxa to which the assayed individual has likely "
+                "been exposed with pepsirf's deconv singular mode module"
+)
+
+plugin.methods.register_function(
+        function=deconv.deconv_batch,
+        inputs={
+                'enriched_dir': PairwiseEnrichment,
+                **deconv_shared_inputs
+        },
+        parameters={
+                'outfile_suffix': Str,
+                'mapfile_suffix': Str,
+                'remove_file_types': Bool,
+                **deconv_shared_parameters
+        },
+        outputs=[
+                ('deconv_output', DeconvBatch),
+                ('score_per_round', ScorePerRound),
+                ('peptide_assignment_map', PeptideAssignmentMap)
+        ],
+        input_descriptions={
+                'enriched_dir': "Name of a directory containing files, that contain the names of enriched "
+                               "peptides, one per line. Each Peptide contained within these files should have "
+                               "a corresponding entry in the '--linked' input file.", 
+                **deconv_shared_input_descript
+        },
+        parameter_descriptions={
+                'outfile_suffix': "Used for batch mode only. When specified, the name of each file "
+                                "written to the output  directory will have this suffix.",
+                'mapfile_suffix': "Used for batch mode only. When specified, the name of each "
+                                "'--peptide_assignment_map' will have this suffix.",
+                'remove_file_types': "Use this flag to exclude input file ('--enrich') extensions from the names "
+                                "of output files. Not used in singular mode.",
+                **deconv_shared_parameters_descript
+        },
+        output_descriptions={
+                'deconv_output':"Name of the file to which output is written. Output will be in the form of a "
+                        "tab-delimited file with a header.",
+                'score_per_round':"Name of directory to write counts/scores to after every round. If "
+                                "included, the counts and scores for all remaining taxa will be recorded after "
+                                "every round. Filenames will be written in the format '$dir/round_x', where x "
+                                "is the round number. The original scores will be written to "
+                                "'$dir/round_0'. A new file will be written to the directory after each "
+                                "subsequent round. If this flag is included and the specified directory "
+                                "exists, the program will exit with an error.",
+                'peptide_assignment_map': "Optional output. If specified, a map detailing which peptides were assigned "
+                                       "to which taxa will be written. If this module is run in batch mode, this will "
+                                       "be used as a directory name for the peptide maps to be stored. Maps will be "
+                                        "tab-delimited files with the first column being peptide names; the second "
+                                       "column containing a comma-separated list of taxa to which the peptide was "
+                                       "assigned; the third column will be a list of the taxa with which the peptide "
+                                       "originally shared a kmer. Note that the second column will only contain "
+                                       "multiple values in the event of a tie."
+        },
+        name='pepsirf deconv batch mode module',
+        description="converts a list of enriched peptides into a parsimony-based list of likely taxa to which the assayed individual has likely "
+                "been exposed with pepsirf's deconv batch mode module"
 )
 importlib.import_module("q2_pepsirf.transformers")

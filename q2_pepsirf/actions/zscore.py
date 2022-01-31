@@ -40,7 +40,7 @@ def zscore(
         cmd += ' >> %s' % (outfile)
 
         #run the collected command
-        subprocess.run(cmd, shell=True)
+        subprocess.run(cmd, shell=True, check=True)
 
         #return the zscore outputs as qza's
         return (zscore_output, nan_report)
