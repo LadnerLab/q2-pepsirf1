@@ -38,7 +38,7 @@ def infoSNPN(
         cmd += ' >> %s' % (outfile)
 
         #run command
-        subprocess.run(cmd, shell=True)
+        subprocess.run(cmd, shell=True, check=True)
 
         #return the SNPN output as qza
         return snpn_out
@@ -65,7 +65,7 @@ def infoSumOfProbes(
         cmd += ' >> %s' % (outfile)
 
         #run command
-        subprocess.run(cmd, shell=True)
+        subprocess.run(cmd, shell=True, check=True)
 
         #return the sum of probes output as qza
         return sum_of_probes_out

@@ -34,7 +34,7 @@ def bin(
         cmd += ' >> %s' % (outfile)
 
         #run the collected command
-        subprocess.run(cmd, shell=True)
+        subprocess.run(cmd, shell=True, check=True)
 
         #return the bin outputs as qza's
         return bin_out

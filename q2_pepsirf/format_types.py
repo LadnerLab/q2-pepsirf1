@@ -24,6 +24,12 @@ MultiFile = SemanticType('MultiFile')
 ProteinFasta = SemanticType('ProteinFasta')
 PeptideFasta = SemanticType('PeptideFasta')
 Link = SemanticType('Link')
+PeptideIDList = SemanticType('PeptideIDList')
+PepsirfDMP = SemanticType('PepsirfDMP')
+DeconvSingluar = SemanticType('DeconvSingluar')
+ScorePerRound = SemanticType('ScorePerRound')
+DeconvBatch = SemanticType('DeconvBatch')
+PeptideAssignmentMap = SemanticType('PeptideAssignmentMap')
 
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
@@ -54,16 +60,21 @@ class EnrichmentFailureFmt(model.TextFileFormat):
 
 class EnrichedPeptideDirFmt(model.DirectoryFormat):
     pairwise = model.FileCollection(
-        r'.+_enriched\.txt',
+        r'.+_+.+\.txt',
         format=PeptideIDListFmt)
     @pairwise.set_path_maker
-    def pairwise_pathmaker(self, comparisons):
-        return f'{"~".join(comparisons)}_enriched.txt'
+    def pairwise_pathmaker(self, comparisons, suffix):
+        return f'{"~".join(comparisons)}_{suffix}.txt'
     
     failures = model.File(
         'failedEnrichment.txt',
         format=EnrichmentFailureFmt
     )
+
+PeptideIDListDirFmt = model.SingleFileDirectoryFormat(
+    'PeptideIDListDirFmt',
+    'samp_A~samp_B.txt',
+    PeptideIDListFmt)
 
 class ZscoreNanFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
@@ -184,3 +195,69 @@ PepsirfLinkTSVDirFmt = model.SingleFileDirectoryFormat(
     'PepsirfLinkTSVDirFmt',
     'link_output.tsv',
     PepsirfLinkTSVFormat)
+
+class PepsirfDMPFormat(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        'TSV is empty, not a .dmp file.')
+
+PepsirfDMPDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfDMPDirFmt',
+    'file.dmp',
+    PepsirfDMPFormat)
+
+class PepsirfDeconvSingularFormat(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            for _, line in zip(range(1), fh):
+                if not line.startswith('Species Name\t'):
+                    raise model.ValidationError(
+                        'TSV does not start with "Species Name"')
+
+PepsirfDeconvSingularDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfDeconvSingularDirFmt',
+    'singular_mode.tsv',
+    PepsirfDeconvSingularFormat)
+
+class PepsirfDeconvBatchDirFmt(model.DirectoryFormat):
+    batch = model.FileCollection(
+        r'.+_+.+\.txt',
+        format=PepsirfDeconvSingularFormat)
+    @batch.set_path_maker
+    def batch_pathmaker(self, comparisons, suffix):
+        return f'{"~".join(comparisons)}_{suffix}.txt'
+
+class ScorePerRoundFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            for _, line in zip(range(1), fh):
+                if not line.startswith('Species ID\t'):
+                    raise model.ValidationError(
+                        'round file does not start with "Species ID"')
+
+class ScorePerRoundDirFmt(model.DirectoryFormat):
+    score = model.FileCollection(
+        r'round_.+',
+        format=ScorePerRoundFmt)
+    @score.set_path_maker
+    def score_pathmaker(self, round):
+        return f'round_{round}'
+
+class PeptideAssignMapFormat(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            for _, line in zip(range(1), fh):
+                if not line.startswith('Peptide\t'):
+                    raise model.ValidationError(
+                        '.map does not start with "Peptide"')
+
+class PeptideAssignMapDirFmt(model.DirectoryFormat):
+    batch = model.FileCollection(
+        r'.+_.+\.map',
+        format=PeptideAssignMapFormat)
+    @batch.set_path_maker
+    def batch_pathmaker(self, comparisons, suffix):
+        return f'{"~".join(comparisons)}_{suffix}.map'
