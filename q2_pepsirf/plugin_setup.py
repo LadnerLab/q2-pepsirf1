@@ -33,7 +33,11 @@ from q2_pepsirf.format_types import (
     PeptideIDListDirFmt, PeptideIDList, PepsirfDMP, PepsirfDMPDirFmt, PepsirfDMPFormat,
     DeconvSingluar, PepsirfDeconvSingularFormat, PepsirfDeconvSingularDirFmt, ScorePerRound,
     ScorePerRoundFmt, ScorePerRoundDirFmt, PepsirfDeconvBatchDirFmt, DeconvBatch,
-    PeptideAssignMapFormat, PeptideAssignMapDirFmt, PeptideAssignmentMap
+    PeptideAssignMapFormat, PeptideAssignMapDirFmt, PeptideAssignmentMap, DemuxFif,
+    PepsirfDemuxFifDirFmt, PepsirfDemuxFifFmt, DemuxSampleList, PepsirfDemuxSampleListFmt,
+    PepsirfDemuxSampleListDirFmt, DemuxIndex, PepsirfDemuxIndexDirFmt, PepsirfDemuxIndexFmt,
+    DemuxLibrary, PepsirfDemuxLibraryDirFmt, PepsirfDemuxLibraryFmt, DemuxFastq, PepsirfDemuxFastqDirFmt,
+    PepsirfDemuxFastqFmt, DemuxDiagnostic, PepsirfDemuxDiagnosticDirFmt, PepsirfDemuxDiagnosticFormat
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
@@ -44,6 +48,7 @@ import q2_pepsirf.actions.bin as bin
 import q2_pepsirf.actions.subjoin as subjoin
 import q2_pepsirf.actions.link as link
 import q2_pepsirf.actions.deconv as deconv
+import q2_pepsirf.actions.demux as demux
 
 from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
@@ -83,7 +88,19 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         ScorePerRoundDirFmt,
                         PepsirfDeconvBatchDirFmt,
                         PeptideAssignMapFormat,
-                        PeptideAssignMapDirFmt)
+                        PeptideAssignMapDirFmt,
+                        PepsirfDemuxFifFmt,
+                        PepsirfDemuxFifDirFmt,
+                        PepsirfDemuxSampleListFmt,
+                        PepsirfDemuxSampleListDirFmt,
+                        PepsirfDemuxIndexFmt,
+                        PepsirfDemuxIndexDirFmt,
+                        PepsirfDemuxLibraryFmt,
+                        PepsirfDemuxLibraryDirFmt,
+                        PepsirfDemuxFastqFmt,
+                        PepsirfDemuxFastqDirFmt,
+                        PepsirfDemuxDiagnosticFormat,
+                        PepsirfDemuxDiagnosticDirFmt)
 
 plugin.register_semantic_types(
         Normed, NormedDifference, NormedDiffRatio,
@@ -158,6 +175,30 @@ plugin.register_semantic_type_to_format(
 plugin.register_semantic_type_to_format(
         PeptideAssignmentMap,
         PeptideAssignMapDirFmt
+)
+plugin.register_semantic_type_to_format(
+        DemuxFif,
+        PepsirfDemuxFifDirFmt
+)
+plugin.register_semantic_type_to_format(
+        DemuxSampleList,
+        PepsirfDemuxSampleListDirFmt
+)
+plugin.register_semantic_type_to_format(
+        DemuxIndex,
+        PepsirfDemuxIndexDirFmt
+)
+plugin.register_semantic_type_to_format(
+        DemuxLibrary,
+        PepsirfDemuxLibraryDirFmt
+)
+plugin.register_semantic_type_to_format(
+        DemuxFastq,
+        PepsirfDemuxFastqDirFmt
+)
+plugin.register_semantic_type_to_format(
+        DemuxDiagnostic,
+        PepsirfDemuxDiagnosticDirFmt
 )
 
 T_approach, T_out = TypeMap ({
@@ -718,4 +759,120 @@ plugin.methods.register_function(
         description="converts a list of enriched peptides into a parsimony-based list of likely taxa to which the assayed individual has likely "
                 "been exposed with pepsirf's deconv batch mode module"
 )
+
+plugin.methods.register_function(
+        function=demux.demux,
+        inputs={
+                'input_r1': DemuxFastq,
+                'input_r2': DemuxFastq,
+                'index': DemuxIndex,
+                'samplelist': DemuxSampleList,
+                'fif': DemuxFif,
+                'library': DemuxLibrary
+        },
+        parameters={
+                'seq': Str,
+                'read_per_loop': Int,
+                'num_threads': Int,
+                'phred_base': Int,
+                'phred_min_score': Int,
+                'sindex': Str,
+                'translate_aggregates': Bool,
+                'concatemer': Bool,
+                'sname': Str,
+                'index1': Str,
+                'index2': Str,
+                'pepsirf_binary': Str,
+                'outfile': Str
+        },
+        outputs=[
+                ('raw_counts_output', FeatureTable[RawCounts]),
+                ('diagnostic_output', DemuxDiagnostic)
+        ],
+        input_descriptions={
+                'input_r1': " Fastq-formatted file containing reads with DNA tags. If PepSIRF was NOT "
+                        "compiled with Zlib support, this file must be uncompressed. If PepSIRF was "
+                        "compiled with Zlib support, then this file can be uncompressed or compressed "
+                        "using gzip. In this case, the file format will be automatically "
+                        "determined.",
+                'input_r2': "Optional index-only fastq file. If PepSIRF was NOT compiled with Zlib "
+                        "support, this file must be uncompressed. If PepSIRF was compiled "
+                        "with Zlib support, then this file can be uncompressed or compressed using "
+                        "gzip. In this case, the file format will be automatically determined. "
+                        "Note that if this argument is not supplied, only 'index1' will be used to "
+                        "identify samples.",
+                'index': "Name of fasta-formatted file containing forward and (potentially) reverse index "
+                        "sequences. Sequence names must match exactly with those supplied in the "
+                        "'samplelist'.",
+                'samplelist': "A tab-delimited list of samples with a header row and one sample per line. "
+                        "This file must contain at least one index column and one sample name "
+                        "column. Multiple index columns may be included. This file can also include "
+                        "additional columns that will not be used for the demultiplexing. Specify "
+                        "which columns to use with the '--sname', '--sindex1', and '--sindex2' "
+                        "flags. If '-fif' is used, then only '-sname' will be used.",
+                'fif': "The flexible index file can be provided as an alternative to the '--index1' and "
+                "'--index2' options. The file must use the following format: a tab-delimited "
+                "file with 5 ordered columns: 1) index name, which should correspond to a "
+                "header name in the sample sheet, 2) read name, which should be either 'r1' "
+                "or 'r2' (not case-sensitive) to specify whether the index is in '--input_r1' or "
+                "'--input_r2', 3) index start location (0-based, inclusive), 4) index length "
+                "and 5) number of mismatched to allow. '--index1', '--index2', '--sname', "
+                "'--sindex1', and 'sindex2' will be ignored if this option is provided.",
+                'library': "Fasta-formatted file containing reference DNA tags. If this flag is not "
+                        "included, reference-independent demultiplexing will be performed. In "
+                        "reference-independent mode, each sequence in the region specified by "
+                        "'--seq' will be considered its own reference, and the observed sequences "
+                        "will be used as the row names in the output count matrix."
+        },
+        parameter_descriptions={
+                'seq': "Positional information for the DNA tags. This argument must be passed in "
+                "the same format specified for 'index1'.",
+                'read_per_loop': "The number of fastq records read a time. A higher value will result in "
+                                "more memory usage by the program, but will also result in fewer disk "
+                                "accesses, increasing performance of the program.",
+                'num_threads': "Number of threads to use for analyses.",
+                'phred_base': "Phred base to use when parsing fastq quality scores. Valid options include "
+                        "33 or 64.",
+                'phred_min_score': "The minimum average phred-scaled quality score for the DNA tag portion "
+                                "of a read for it to be considered for matching. This means that if the "
+                                "average phred33/64 score for a read at the expected locations of the DNA tag "
+                                "is not at least this then the read will be discarded.",
+                'sindex': "Used to specify the header for the index 1 and optional index 2 column in "
+                        "the samplelist. This is an alternative to using the '--fif'' option.",
+                'translate_aggregates': "Include this flag to use translation-based aggregation. In this "
+                                "mode, counts for nt sequences will be combined if they translate into the "
+                                "same aa sequence. Note: When this mode is used, the name of the aggregate "
+                                "sequence will be the sequence that was a result of the translation. Therefore, "
+                                "this mode is most appropriate for use with reference-independent "
+                                "demultiplexing.",
+                'concatemer': "Concatenated adapter/primer sequences (optional). The presence of this "
+                        "sequence within a read indicates that the expected DNA tag is not present. If "
+                        "supplied, the number of times this concatemer is recorded in the input "
+                        "file is reported.",
+                'sname': "Used to specify the header for the sample name column in the samplelist. "
+                        "By default 'SampleName' is set as the column header name.",
+                'index1': "Positional information for index1 (i.e barcode 1). This argument must be "
+                        "passed as 3 comma-separated values. The first item represents the (0-based) "
+                        "expected start position of the first index; the second represents the length "
+                        "of the first index; and the third represents the number of mismatches "
+                        "that are tolerated for this index. An example is '--index1 12,12,1'. This "
+                        "says that the index starts at (0-based) position 12, the index is 12 "
+                        "nucleotides long, and if a perfect match is not found, then up to one "
+                        "mismatch will be tolerated.",
+                'index2': "Positional information for index2, optional. This argument must be passed "
+                        "in the same format specified for '--index1'. If '--input2' is provided, "
+                        "this positional information is assummed to refer to the reads contained in this "
+                        "second, index-only fastq file. If '--input_r2' is NOT provided, this "
+                        "positional information is assumed to refer to the reads contained in the "
+                        "'--input_r1' fastq file.",
+                'pepsirf_binary': "The binary to call pepsirf on your system.",
+                'outfile': "The outfile that will produce a list of inputs to PepSIRF."
+        },
+        output_descriptions=None,
+        name='pepsirf demux module',
+        description="takes the following parameters and outputs counts for each reference"
+                "sequence (i.e. probe/peptide) for each sample with pepsirf's demux module "
+                "(MUST precompile pepsirf's develop branch to run this module)"
+)
+
 importlib.import_module("q2_pepsirf.transformers")

@@ -30,6 +30,12 @@ DeconvSingluar = SemanticType('DeconvSingluar')
 ScorePerRound = SemanticType('ScorePerRound')
 DeconvBatch = SemanticType('DeconvBatch')
 PeptideAssignmentMap = SemanticType('PeptideAssignmentMap')
+DemuxFif = SemanticType('DemuxFif')
+DemuxSampleList = SemanticType('DemuxSampleList')
+DemuxIndex = SemanticType('DemuxIndex')
+DemuxLibrary = SemanticType('DemuxLibrary')
+DemuxFastq = SemanticType('DemuxFastq')
+DemuxDiagnostic = SemanticType('DemuxDiagnostic')
 
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
@@ -261,3 +267,82 @@ class PeptideAssignMapDirFmt(model.DirectoryFormat):
     @batch.set_path_maker
     def batch_pathmaker(self, comparisons, suffix):
         return f'{"~".join(comparisons)}_{suffix}.map'
+
+class PepsirfDemuxFifFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        'TSV is empty, not a demux fif file.')
+
+PepsirfDemuxFifDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfDemuxFifDirFmt',
+    'demux_fif.tsv',
+    PepsirfDemuxFifFmt)
+
+class PepsirfDemuxSampleListFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        'TSV is empty, not a demux sample list file.')
+
+PepsirfDemuxSampleListDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfDemuxSampleListDirFmt',
+    'demux_index.tsv',
+    PepsirfDemuxSampleListFmt)
+
+class PepsirfDemuxIndexFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        '.fa is empty, not a demux index file.')
+
+PepsirfDemuxIndexDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfDemuxIndexDirFmt',
+    'demux_index.fa',
+    PepsirfDemuxIndexFmt)
+
+class PepsirfDemuxLibraryFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        '.fna is empty, not a demux library file.')
+
+PepsirfDemuxLibraryDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfDemuxLibraryDirFmt',
+    'demux_library.fna',
+    PepsirfDemuxLibraryFmt)
+
+class PepsirfDemuxFastqFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            line = list(zip(range(1), fh))
+            if line == [] :
+                raise model.ValidationError(
+                        '.fna is empty, not a demux library file.')
+
+PepsirfDemuxFastqDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfDemuxFastqDirFmt',
+    'demux.fastq',
+    PepsirfDemuxFastqFmt)
+
+class PepsirfDemuxDiagnosticFormat(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            for _, line in zip(range(1), fh):
+                if not line.startswith('Sample name\t'):
+                    raise model.ValidationError(
+                        'TSV does not start with "Sample name"')
+
+
+PepsirfDemuxDiagnosticDirFmt = model.SingleFileDirectoryFormat(
+    'PepsirfDemuxDiagnosticDirFmt',
+    'diagnostic_output.tsv',
+    PepsirfDemuxDiagnosticFormat)
