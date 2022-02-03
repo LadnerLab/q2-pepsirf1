@@ -60,7 +60,7 @@ qiime tools import --input-path rawData.tsv \
 | .DMP file | PepsirfDMPFormat | 'PepsirfDMP' |
 | Deconv Singluar | PepsirfDeconvSingularFormat | 'DeconvSingular' |
 | Deconv Batch Dir | PepsirfDeconvBatchDirFmt | 'DeconvBatch' |
-| Score Per Round (Deconv) | ScorePerRoundFmt | 'ScorePerRound' |
+| Score Per Round (Deconv) | ScorePerRoundDirFmt | 'ScorePerRound' |
 | Peptide Assignment Map (Deconv) | PeptideAssignMapDirFmt | 'PeptideAssignmentMap' |
 
 ## Qiime Export
