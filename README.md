@@ -62,6 +62,13 @@ qiime tools import --input-path rawData.tsv \
 | Deconv Batch Dir | PepsirfDeconvBatchDirFmt | 'DeconvBatch' |
 | Score Per Round (Deconv) | ScorePerRoundDirFmt | 'ScorePerRound' |
 | Peptide Assignment Map (Deconv) | PeptideAssignMapDirFmt | 'PeptideAssignmentMap' |
+| fif file (Demux) | PepsirfDemuxFifFmt | 'DemuxFif' |
+| Sample List (Demux) | PepsirfDemuxSampleListFmt | 'DemuxSampleList' |
+| Index (Demux) | PepsirfDemuxIndexFmt | 'DemuxIndex' |
+| Library (Demux) | PepsirfDemuxLibraryFmt | 'DemuxLibrary' |
+| FASTQ file (Demux) | PepsirfDemuxFastqFmt | 'DemuxFastq' |
+| Diagnostic file (Demux) | PepsirfDemuxDiagnosticFormat | 'DemuxDiagnostic' |
+
 
 ## Qiime Export
 #### Raw Data Example:
@@ -98,3 +105,9 @@ qiime tools export --input-path rawData.qza \
 | Deconv Batch Dir | PepsirfDeconvBatchDirFmt |
 | Score Per Round (Deconv) | ScorePerRoundFmt |
 | Peptide Assignment Map (Deconv) | PeptideAssignMapDirFmt |
+| fif file (Demux) | PepsirfDemuxFifFmt |
+| Sample List (Demux) | PepsirfDemuxSampleListFmt |
+| Index (Demux) | PepsirfDemuxIndexFmt |
+| Library (Demux) | PepsirfDemuxLibraryFmt |
+| FASTQ file (Demux) | PepsirfDemuxFastqFmt |
+| Diagnostic file (Demux) | PepsirfDemuxDiagnosticFormat |
