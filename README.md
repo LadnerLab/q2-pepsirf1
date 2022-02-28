@@ -14,9 +14,6 @@ Visit: https://docs.qiime2.org/2021.8/install/ for intallation documentation on 
 Visit: https://github.com/LadnerLab/PepSIRF for installation documentation on PepSIRF
 
 ### q2-pepsirf installation:
-#### Dependencies:
-- `qiime2-2021.11 +`
-- `PepSIRF`
 
 #### Directions:
 
