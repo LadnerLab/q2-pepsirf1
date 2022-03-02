@@ -36,6 +36,7 @@ DemuxIndex = SemanticType('DemuxIndex')
 DemuxLibrary = SemanticType('DemuxLibrary')
 DemuxFastq = SemanticType('DemuxFastq')
 DemuxDiagnostic = SemanticType('DemuxDiagnostic')
+ProteinAlignment = SemanticType('ProteinAlignment')
 
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
@@ -346,3 +347,17 @@ PepsirfDemuxDiagnosticDirFmt = model.SingleFileDirectoryFormat(
     'PepsirfDemuxDiagnosticDirFmt',
     'diagnostic_output.tsv',
     PepsirfDemuxDiagnosticFormat)
+
+class ProteinAlignmentFormat(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            for _, line in zip(range(1), fh):
+                if not line.startswith('ProtName\t'):
+                    raise model.ValidationError(
+                        'TSV does not start with "ProtName"')
+
+
+PrtoeinAlignmentDirFmt = model.SingleFileDirectoryFormat(
+    'PrtoeinAlignmentDirFmt',
+    'protein_alignment.tsv',
+    ProteinAlignmentFormat)

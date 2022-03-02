@@ -21,7 +21,7 @@ from qiime2.plugin import (Plugin,
 from q2_pepsirf.format_types import (
     EnrichedPeptideDirFmt, Normed, NormedDifference, 
     NormedDiffRatio, NormedRatio, NormedSized, 
-    PairwiseEnrichment, PeptideIDListFmt, Zscore, RawCounts,
+    PairwiseEnrichment, PeptideIDListFmt, ProteinAlignment, ProteinAlignmentFormat, PrtoeinAlignmentDirFmt, Zscore, RawCounts,
     PepsirfContingencyTSVDirFmt, PepsirfContingencyTSVFormat, 
     ZscoreNan, ZscoreNanDirFmt, ZscoreNanFormat, PeptideBinFormat,
     PeptideBinDirFmt, PeptideBins, PepsirfInfoSumOfProbesDirFmt,
@@ -37,7 +37,8 @@ from q2_pepsirf.format_types import (
     PepsirfDemuxFifDirFmt, PepsirfDemuxFifFmt, DemuxSampleList, PepsirfDemuxSampleListFmt,
     PepsirfDemuxSampleListDirFmt, DemuxIndex, PepsirfDemuxIndexDirFmt, PepsirfDemuxIndexFmt,
     DemuxLibrary, PepsirfDemuxLibraryDirFmt, PepsirfDemuxLibraryFmt, DemuxFastq, PepsirfDemuxFastqDirFmt,
-    PepsirfDemuxFastqFmt, DemuxDiagnostic, PepsirfDemuxDiagnosticDirFmt, PepsirfDemuxDiagnosticFormat
+    PepsirfDemuxFastqFmt, DemuxDiagnostic, PepsirfDemuxDiagnosticDirFmt, PepsirfDemuxDiagnosticFormat,
+    ProteinAlignmentFormat, PrtoeinAlignmentDirFmt, ProteinAlignment
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
@@ -100,7 +101,9 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         PepsirfDemuxFastqFmt,
                         PepsirfDemuxFastqDirFmt,
                         PepsirfDemuxDiagnosticFormat,
-                        PepsirfDemuxDiagnosticDirFmt)
+                        PepsirfDemuxDiagnosticDirFmt,
+                        ProteinAlignmentFormat,
+                        PrtoeinAlignmentDirFmt)
 
 plugin.register_semantic_types(
         Normed, NormedDifference, NormedDiffRatio,
@@ -199,6 +202,10 @@ plugin.register_semantic_type_to_format(
 plugin.register_semantic_type_to_format(
         DemuxDiagnostic,
         PepsirfDemuxDiagnosticDirFmt
+)
+plugin.register_semantic_type_to_format(
+        ProteinAlignment,
+        PrtoeinAlignmentDirFmt
 )
 
 T_approach, T_out = TypeMap ({
