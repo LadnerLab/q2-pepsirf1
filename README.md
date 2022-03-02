@@ -65,6 +65,7 @@ qiime tools import --input-path rawData.tsv \
 | Library (Demux) | PepsirfDemuxLibraryFmt | 'DemuxLibrary' |
 | FASTQ file (Demux) | PepsirfDemuxFastqFmt | 'DemuxFastq' |
 | Diagnostic file (Demux) | PepsirfDemuxDiagnosticFormat | 'DemuxDiagnostic' |
+| Protein Alignment (proteinHeatmap) | ProteinAlignmentFormat | 'ProteinAlignment' |
 
 
 ## Qiime Export
@@ -108,3 +109,4 @@ qiime tools export --input-path rawData.qza \
 | Library (Demux) | PepsirfDemuxLibraryFmt |
 | FASTQ file (Demux) | PepsirfDemuxFastqFmt |
 | Diagnostic file (Demux) | PepsirfDemuxDiagnosticFormat |
+| Protein Alignment (proteinHeatmap) | ProteinAlignmentFormat |
