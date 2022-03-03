@@ -2,6 +2,13 @@ import subprocess, os
 import tempfile, qiime2
 from q2_pepsirf.format_types import PepsirfContingencyTSVFormat, PepsirfDemuxDiagnosticFormat, PepsirfDemuxFastqFmt, PepsirfDemuxFifFmt, PepsirfDemuxIndexFmt, PepsirfDemuxLibraryFmt, PepsirfDemuxSampleListFmt
 
+# Name: demux
+# Process: runs pepsirf's demux module (currently in the development branch)
+# Method inputs/parameters: input_r1, index, samplelist, seq input_r2, fif,
+# library, read_per_loop, num_threads, phred_base, phred_min_score, sindex,
+# translate_aggregates, concatemer, sname, index1, index2, outfile, pepsirf_binary
+# Method outputs/Returned: the raw data and diagnostic data
+# Dependencies: subprocess, os, tempfile
 def demux(
     input_r1: PepsirfDemuxFastqFmt,
     index: PepsirfDemuxIndexFmt,

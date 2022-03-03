@@ -8,7 +8,7 @@ import pandas as pd
 import biom
 
 
-# Then BIOMV210Format -> BIOMV210DirFmt
+# Transform a PepsirfContingencyTSVFormat into a BIOMV210Format
 @plugin.register_transformer
 def _0(ff: PepsirfContingencyTSVFormat) -> BIOMV210Format:
     result = BIOMV210Format()
@@ -22,6 +22,7 @@ def _0(ff: PepsirfContingencyTSVFormat) -> BIOMV210Format:
 
     return result
 
+# transform a BIOMV210Format into a PepsirfContingencyTSVFormat
 @plugin.register_transformer
 def _1(ff: BIOMV210Format) -> PepsirfContingencyTSVFormat:
     result = PepsirfContingencyTSVFormat()
@@ -34,11 +35,13 @@ def _1(ff: BIOMV210Format) -> PepsirfContingencyTSVFormat:
 
     return result
 
+# transform a PepsirfInfoSumOfProbesFmt into a pandas dataframe
 @plugin.register_transformer
 def _2(ff: PepsirfInfoSumOfProbesFmt) -> pd.DataFrame:
     result = pd.read_csv(str(ff), sep='\t')
     return result
 
+# transform a EnrichedPeptideDirFmt into a pandas dataframe
 @plugin.register_transformer
 def _3(ff: EnrichedPeptideDirFmt ) -> pd.DataFrame:
     pairwiseDict = {}
@@ -48,12 +51,14 @@ def _3(ff: EnrichedPeptideDirFmt ) -> pd.DataFrame:
     df = df.fillna(False)
     return df
 
+# transform a PeptideIDListFmt into a pandas series
 @plugin.register_transformer
 def _4(ff: PeptideIDListFmt) -> pd.Series:
     with ff.open() as fh:
         ids = [id.strip() for id in fh.readlines()]
     return pd.Series(True, index = ids)
     
+# transform a PepsirfContingencyTSVFormat into a pandas dataframe
 @plugin.register_transformer
 def _5(ff: PepsirfContingencyTSVFormat) -> pd.DataFrame:
     

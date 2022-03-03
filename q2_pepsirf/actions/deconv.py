@@ -6,6 +6,13 @@ from q2_pepsirf.format_types import (
     EnrichedPeptideDirFmt, PepsirfDeconvSingularFormat, ScorePerRoundDirFmt,
     PepsirfDeconvBatchDirFmt, PeptideAssignMapDirFmt)
 
+# Name: collect_cmd
+# Process: collects default and required commands for PepSIRF's deconv module
+# Method inputs/parameters: pepsirf_binary,enriched, threshold, linked,
+# scoring_strategy, score_tie_threhold, score_overlap_threshold,
+# tsv_out, score_filtering, id_name_map, single_threaded, score_per_round
+# Method outputs/Returned: the full command
+# Dependencies: None
 def collect_cmd(
     pepsirf_binary,enriched, threshold, linked,
     scoring_strategy, score_tie_threhold, score_overlap_threshold,
@@ -29,7 +36,15 @@ def collect_cmd(
 
     return cmd
     
-
+# Name: deconv_singluar
+# Process: runs PepSIRF's deconv module in singular mode
+# Method inputs/parameters: enriched, threshold, linked,
+# scoring_stratgey, score_filtering, score_tie_threshold,
+# score_ocerlap_threshold, id_name_map, single_threaded,
+# outfile, pepsirf_binary
+# Method outputs/Returned: deconv tsv output and score-per-round
+# output
+# Dependencies: Subprocess, os, copy_tree, tempfile
 def deconv_singluar(
     enriched: PeptideIDListFmt,
     threshold: int,
@@ -76,6 +91,16 @@ def deconv_singluar(
 
     return tsv_out, score_per_round
 
+# Name: deconv_batch
+# Process: runs PepSIRF's deconv module in batch mode
+# Method inputs/parameters: enriched, threshold, linked,
+# outfile_suffix, mapfile_suffix, remove_file_types
+# scoring_stratgey, score_filtering, score_tie_threshold,
+# score_overlap_threshold, id_name_map, single_threaded,
+# outfile, pepsirf_binary
+# Method outputs/Returned: deconv dir output, score-per-round
+# output, and mapfile dir output
+# Dependencies: Subprocess, os, copy_tree, tempfile
 def deconv_batch(
     enriched_dir: EnrichedPeptideDirFmt,
     threshold: int,

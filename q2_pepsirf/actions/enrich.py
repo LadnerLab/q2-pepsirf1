@@ -8,7 +8,11 @@ from q2_pepsirf.format_types import (
     EnrichThreshFileFormat
     )
 
-#function used to take source metadata and create pairs files
+# Name: _make_pair_list
+# Process: function used to take source metadata and create pairs files
+# Method inputs/parameters: column, outpath
+# Method outputs/Returned: the pairs result
+# Dependencies: itertools
 def _make_pairs_list(column, outpath):
     series = column.to_series()
     pairs = {k: v.index for k,v in series.groupby(series)}
@@ -21,6 +25,13 @@ def _make_pairs_list(column, outpath):
                 fh.write(a + '\t' + b + '\n')
     return result
 
+# Name: enrich
+# Process: runs pepsirf's enrich module
+# Method inputs/parameters: source, thresh_file, zscores, col_sum, exact_z_thresh,
+# exact_cs_thresh, raw_scores, raw_constraint, enrichment_failure, truncate,
+# outfile, pepsirf_binary
+# Method outputs/Returned: the enriched directory
+# Dependencies: subprocess, os, csv, tempfile
 def enrich(
     source: qiime2.CategoricalMetadataColumn,
     thresh_file: EnrichThreshFileFormat = None,

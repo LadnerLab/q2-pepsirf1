@@ -3,6 +3,12 @@ import tempfile, qiime2
 
 from q2_pepsirf.format_types import PepsirfContingencyTSVFormat
 
+# Name: norm
+# Process: runs pepsirf's norm module
+# Method inputs/parameters: peptide_scores, normalize_approach, negative_control,
+# negative_id, negative_names, precision, outfile, pepsirf_binary
+# Method outputs/Returned: the norm output tsv
+# Dependencies: subprocess, os, tempfile
 def norm(
     peptide_scores: PepsirfContingencyTSVFormat,
     normalize_approach: str = "col_sum",

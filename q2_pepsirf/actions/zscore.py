@@ -5,6 +5,12 @@ from q2_pepsirf.format_types import (PepsirfContingencyTSVFormat,
                                     PeptideBinFormat, ZscoreNan,
                                     ZscoreNanFormat)
 
+# Name: zsore
+# Process: runs pepsirf's zscore module
+# Method inputs/parameters: scores, bins, trim, hdi, num_threads,
+#  outfile, pepsirf_binary
+# Method outputs/Returned: the zscore output tsv and nan report
+# Dependencies: subprocess, os, tempfile
 def zscore(
     scores: PepsirfContingencyTSVFormat,
     bins: PeptideBinFormat,

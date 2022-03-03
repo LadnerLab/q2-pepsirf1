@@ -5,7 +5,7 @@ from qiime2.plugin import SemanticType
 
 from q2_types.feature_table import FeatureTable
 
-
+# create a semantic type for each format type created
 Normed = SemanticType('Normed', variant_of=FeatureTable.field['content'])
 NormedDifference = SemanticType('NormedDifference', variant_of=FeatureTable.field['content'])
 NormedDiffRatio = SemanticType('NormedDiffRatio', variant_of=FeatureTable.field['content'])
@@ -13,7 +13,6 @@ NormedRatio = SemanticType('NormedRatio', variant_of=FeatureTable.field['content
 NormedSized = SemanticType('NormedSized', variant_of=FeatureTable.field['content'])
 Zscore = SemanticType('Zscore', variant_of=FeatureTable.field['content'])
 RawCounts = SemanticType('RawCounts', variant_of=FeatureTable.field['content'])
-
 PairwiseEnrichment = SemanticType('PairwiseEnrichment')
 ZscoreNan = SemanticType('ZscoreNan')
 PeptideBins = SemanticType('PeptideBins')
@@ -38,6 +37,7 @@ DemuxFastq = SemanticType('DemuxFastq')
 DemuxDiagnostic = SemanticType('DemuxDiagnostic')
 ProteinAlignment = SemanticType('ProteinAlignment')
 
+# create a format for a featuretable file
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -52,6 +52,7 @@ PepsirfContingencyTSVDirFmt = model.SingleFileDirectoryFormat(
     'pepsirf-table.tsv',
     PepsirfContingencyTSVFormat)
 
+# create a format for a peptide id list file
 class PeptideIDListFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -61,10 +62,12 @@ class PeptideIDListFmt(model.TextFileFormat):
                         'TXT file is empty, not a '
                         'enriched peptides file.')
 
+# create a format for enrichment failure
 class EnrichmentFailureFmt(model.TextFileFormat):
     def _validate_( self, level='min'):
         pass
 
+# create a format for enrichment directory
 class EnrichedPeptideDirFmt(model.DirectoryFormat):
     pairwise = model.FileCollection(
         r'.+_+.+\.txt',
@@ -83,6 +86,7 @@ PeptideIDListDirFmt = model.SingleFileDirectoryFormat(
     'samp_A~samp_B.txt',
     PeptideIDListFmt)
 
+# create a format for zscore nan file
 class ZscoreNanFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -97,6 +101,7 @@ ZscoreNanDirFmt = model.SingleFileDirectoryFormat(
     'nan-zscores.nan',
     ZscoreNanFormat)
 
+# create a format for bins file
 class PeptideBinFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -110,6 +115,7 @@ PeptideBinDirFmt = model.SingleFileDirectoryFormat(
     'bins.tsv',
     PeptideBinFormat)
 
+# create a format for info num of samples, num of probes files
 class PepsirfInfoSNPNFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -123,6 +129,7 @@ PepsirfInfoSNPNDirFmt = model.SingleFileDirectoryFormat(
     'SN.tsv',
     PepsirfInfoSNPNFormat)
 
+# create a file for info Sum of probes file
 class PepsirfInfoSumOfProbesFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -137,6 +144,7 @@ PepsirfInfoSumOfProbesDirFmt = model.SingleFileDirectoryFormat(
     'RC.tsv',
     PepsirfInfoSumOfProbesFmt)
 
+# create a format for a threshold file
 class EnrichThreshFileFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -150,6 +158,7 @@ EnrichThreshFileDirFmt = model.SingleFileDirectoryFormat(
     '_thresh.tsv',
     EnrichThreshFileFormat)
 
+# create a format for a multifile
 class SubjoinMultiFileFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -163,6 +172,7 @@ SubjoinMultiFileDirFmt = model.SingleFileDirectoryFormat(
     'multifile.txt',
     SubjoinMultiFileFmt)
 
+# create a format for a protein fasta file
 class ProteinFastaFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -176,6 +186,7 @@ ProteinFastaDirFmt = model.SingleFileDirectoryFormat(
     'protein_file.fasta',
     ProteinFastaFmt)
 
+# create a format for a peptide fasta file
 class PeptideFastaFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -189,6 +200,7 @@ PeptideFastaDirFmt = model.SingleFileDirectoryFormat(
     'peptide_file.faa',
     PeptideFastaFmt)
 
+# create a format for a link file
 class PepsirfLinkTSVFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -203,6 +215,7 @@ PepsirfLinkTSVDirFmt = model.SingleFileDirectoryFormat(
     'link_output.tsv',
     PepsirfLinkTSVFormat)
 
+# create a format for a DMP file
 class PepsirfDMPFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -216,6 +229,7 @@ PepsirfDMPDirFmt = model.SingleFileDirectoryFormat(
     'file.dmp',
     PepsirfDMPFormat)
 
+# create a format for a deoncv singular file
 class PepsirfDeconvSingularFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -229,6 +243,7 @@ PepsirfDeconvSingularDirFmt = model.SingleFileDirectoryFormat(
     'singular_mode.tsv',
     PepsirfDeconvSingularFormat)
 
+# create a format for a deconv batch dir
 class PepsirfDeconvBatchDirFmt(model.DirectoryFormat):
     batch = model.FileCollection(
         r'.+_+.+\.txt',
@@ -237,6 +252,7 @@ class PepsirfDeconvBatchDirFmt(model.DirectoryFormat):
     def batch_pathmaker(self, comparisons, suffix):
         return f'{"~".join(comparisons)}_{suffix}.txt'
 
+# create a format for a score-per-round dir
 class ScorePerRoundFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -253,6 +269,7 @@ class ScorePerRoundDirFmt(model.DirectoryFormat):
     def score_pathmaker(self, round):
         return f'round_{round}'
 
+# create a format for a peptide assignment map dir
 class PeptideAssignMapFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -269,6 +286,7 @@ class PeptideAssignMapDirFmt(model.DirectoryFormat):
     def batch_pathmaker(self, comparisons, suffix):
         return f'{"~".join(comparisons)}_{suffix}.map'
 
+# create a format for a demux fif file
 class PepsirfDemuxFifFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -282,6 +300,7 @@ PepsirfDemuxFifDirFmt = model.SingleFileDirectoryFormat(
     'demux_fif.tsv',
     PepsirfDemuxFifFmt)
 
+# create a format for a demux sample list file
 class PepsirfDemuxSampleListFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -295,6 +314,7 @@ PepsirfDemuxSampleListDirFmt = model.SingleFileDirectoryFormat(
     'demux_index.tsv',
     PepsirfDemuxSampleListFmt)
 
+# create a format for a demux index file
 class PepsirfDemuxIndexFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -308,6 +328,7 @@ PepsirfDemuxIndexDirFmt = model.SingleFileDirectoryFormat(
     'demux_index.fa',
     PepsirfDemuxIndexFmt)
 
+# create a format for a demux library file
 class PepsirfDemuxLibraryFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -321,6 +342,7 @@ PepsirfDemuxLibraryDirFmt = model.SingleFileDirectoryFormat(
     'demux_library.fna',
     PepsirfDemuxLibraryFmt)
 
+# create a format for a demux fastq file
 class PepsirfDemuxFastqFmt(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -334,6 +356,7 @@ PepsirfDemuxFastqDirFmt = model.SingleFileDirectoryFormat(
     'demux.fastq',
     PepsirfDemuxFastqFmt)
 
+# create a format for a demux diagnostic file
 class PepsirfDemuxDiagnosticFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
@@ -348,6 +371,7 @@ PepsirfDemuxDiagnosticDirFmt = model.SingleFileDirectoryFormat(
     'diagnostic_output.tsv',
     PepsirfDemuxDiagnosticFormat)
 
+# create a format for a protein alignment file
 class ProteinAlignmentFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
