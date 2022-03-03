@@ -2,6 +2,12 @@ import subprocess, os
 import tempfile, qiime2
 from q2_pepsirf.format_types import PepsirfContingencyTSVFormat, SubjoinMultiFileFmt
 
+# Name: subjoin
+# Process: runs pepsirf's subjoin module
+# Method inputs/parameters: input_type, multi_file, subjoin_input,
+# filter_peptide_names, duplicate_evaluation, outfile, pepsirf_binary
+# Method outputs/Returned: the subjoin output tsv
+# Dependencies: subprocess, os, tempfile
 def subjoin(
     input_type: str = "raw",
     multi_file: SubjoinMultiFileFmt = None,

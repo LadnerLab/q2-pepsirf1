@@ -6,6 +6,12 @@ from q2_pepsirf.format_types import (
      PeptideBinFormat,
     PepsirfContingencyTSVFormat,)
 
+# Name: bin
+# Process: runs PepSIRF's bin module
+# Method inputs/parameters: scores, allow_other_normalization,
+# bin_size, round_to, outfile, pepsirf_binary
+# Method outputs/Returned: bin file
+# Dependencies: subprocess, os, tempfile, sys
 def bin(
     scores: PepsirfContingencyTSVFormat,
     allow_other_normalization: bool = False,
@@ -17,8 +23,9 @@ def bin(
     #collect temp file names for bin output
     bin_out = PeptideBinFormat()
 
+    # if allow other normalization true print warning
     if allow_other_normalization:
-        print("hello world", file=sys.stderr, flush=True) 
+        print("Using other normalization", file=sys.stderr, flush=True) 
 
     #collect absolute file path name if pepsirf binary is file
     if os.path.isfile(pepsirf_binary):

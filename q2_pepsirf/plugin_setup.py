@@ -53,11 +53,14 @@ import q2_pepsirf.actions.demux as demux
 
 from q2_types.feature_table import FeatureTable, BIOMV210DirFmt
 
-
+# This is the plugin object. It is what the framework will load and what an
+# interface will interact with. Basically every registration we perform will
+# involve this object in some way.
 plugin = Plugin("pepsirf", version=q2_pepsirf.__version__,
                 website="https://github.com/LadnerLab/q2-pepsirf",
                 description="Qiime2 Plug-in for the use of pepsirf within qiime.")
 
+# Register the sematic types as formats
 plugin.register_formats(PepsirfContingencyTSVFormat,
                         PepsirfContingencyTSVDirFmt,
                         PeptideIDListFmt,
@@ -105,6 +108,7 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         ProteinAlignmentFormat,
                         PrtoeinAlignmentDirFmt)
 
+# register all semantic types
 plugin.register_semantic_types(
         Normed, NormedDifference, NormedDiffRatio,
         NormedRatio, NormedSized, Zscore, RawCounts,
@@ -208,6 +212,7 @@ plugin.register_semantic_type_to_format(
         PrtoeinAlignmentDirFmt
 )
 
+# create a type map to change outputs dependent on str choice
 T_approach, T_out = TypeMap ({
         Str%Choices("col_sum"): Normed,
         Str%Choices("diff"): NormedDifference,
@@ -216,8 +221,7 @@ T_approach, T_out = TypeMap ({
         Str%Choices("size_factors"): NormedSized
 })
 
-
-
+# action set up for norm module
 plugin.methods.register_function(
         function=norm.norm,
         inputs={
@@ -267,6 +271,7 @@ plugin.methods.register_function(
         description="Normalize raw count data with pepsirf's norm module"
 )
 
+# action set up for zscore module
 plugin.methods.register_function(
         function=zscore.zscore,
         inputs={
@@ -315,6 +320,7 @@ plugin.methods.register_function(
         description="Calculate Z scores for each peptide in each sample with pepsirf's zscore module"
 )
 
+# action set up for enrich module
 plugin.methods.register_function(
         function=enrich.enrich,
         inputs={
@@ -374,6 +380,7 @@ plugin.methods.register_function(
         description="Determines which peptides are enriched in samples with pepsirf's enrich module"
 )
 
+# action set up for infoSNPN module
 plugin.methods.register_function(
         function=info.infoSNPN,
         inputs={
@@ -404,6 +411,7 @@ plugin.methods.register_function(
         description="Gathers the number of samples and peptides in the matrix using pepsirf's info modules"
 )
 
+# action set up for infoSumOfProbes module
 plugin.methods.register_function(
         function=info.infoSumOfProbes,
         inputs={
@@ -433,11 +441,13 @@ plugin.methods.register_function(
         description="Gathers the sum of probes per sample in the matrix using pepsirf's info module"
 )
 
+# create a typemap to allow other input types when bool is true
 T_norm, T_flag, T_out = TypeMap ({
         (Normed, Bool%Choices(False)): PeptideBins,
         (NormedDifference | NormedDiffRatio | NormedRatio | NormedSized, Bool%Choices(True)): PeptideBins
 })
 
+# action set up for bin module
 plugin.methods.register_function(
         function=bin.bin,
         inputs={
@@ -480,6 +490,7 @@ plugin.methods.register_function(
         description="Creates groups of peptides with similar starting abundances with pepsirf's bin module"
 )
 
+# create a typemap to choose output type based on str choice
 s_approach, s_out = TypeMap ({
         Str%Choices("raw"): RawCounts,
         Str%Choices("col_sum"): Normed,
@@ -489,6 +500,7 @@ s_approach, s_out = TypeMap ({
         Str%Choices("size_factors"): NormedSized
 })
 
+# action set up for subjoin module
 plugin.methods.register_function(
         function=subjoin.subjoin,
         inputs={
@@ -556,6 +568,7 @@ plugin.methods.register_function(
         description="Manipulate matrix files with pepsirf's subjoin module"
 )
 
+# action set up for link module
 plugin.methods.register_function(
         function=link.link,
         inputs={
@@ -601,11 +614,13 @@ plugin.methods.register_function(
         description="Defines linkages between taxonomic groups and peptides based on shared kmers with pepsirf's link module"
 )
 
+# shared inputs for deoncv singular mode and batch mode
 deconv_shared_inputs = {
                 'linked': Link,
                 'id_name_map': PepsirfDMP
         }
 
+# shared parameters for deoncv singular mode and batch mode
 deconv_shared_parameters = {
                 'pepsirf_binary': Str,
                 'outfile': Str,
@@ -617,6 +632,7 @@ deconv_shared_parameters = {
                 'single_threaded': Bool
         }
 
+# shared input descriptions for deoncv singular mode and batch mode
 deconv_shared_input_descript = {
                 'linked': "Name of linkage map to be used for deconvolution. It should be in the "
                         "format output by the 'link' module.",
@@ -626,7 +642,7 @@ deconv_shared_input_descript = {
                         "of the taxon ids linked to peptides of interest. If included, the output will "
                         "contain a column denoting the name of the species as well as the id."
         }
-
+# shared parameter descriptions for deoncv singular mode and batch mode
 deconv_shared_parameters_descript = {
                 'pepsirf_binary': "The binary to call pepsirf on your system.",
                 'outfile': "The outfile that will produce a list of inputs to PepSIRF.",
@@ -677,6 +693,7 @@ deconv_shared_parameters_descript = {
                                 "if you only want only one thread to be used."
         }
 
+# action set up for deconv_singluar module
 plugin.methods.register_function(
         function=deconv.deconv_singluar,
         inputs={
@@ -711,6 +728,7 @@ plugin.methods.register_function(
                 "been exposed with pepsirf's deconv singular mode module"
 )
 
+# action set up for deconv_batch module
 plugin.methods.register_function(
         function=deconv.deconv_batch,
         inputs={
@@ -767,6 +785,7 @@ plugin.methods.register_function(
                 "been exposed with pepsirf's deconv batch mode module"
 )
 
+# action set up for demux module
 plugin.methods.register_function(
         function=demux.demux,
         inputs={
@@ -882,4 +901,5 @@ plugin.methods.register_function(
                 "(MUST precompile pepsirf's develop branch to run this module)"
 )
 
+# import all sematic type transformers
 importlib.import_module("q2_pepsirf.transformers")

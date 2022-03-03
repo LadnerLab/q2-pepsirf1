@@ -12,6 +12,11 @@ from q2_pepsirf.format_types import(
     InfoSNPN
 )
 
+# Name: infoSNPN
+# Process: runs pepsirf's info sample/probes module
+# Method inputs/parameters: input, get, outfile, pepsirf_binary
+# Method outputs/Returned: the samples names or probes names tsv
+# Dependencies: subprocess, os, tempfile
 def infoSNPN(
     input: PepsirfContingencyTSVFormat,
     get: str,
@@ -43,6 +48,11 @@ def infoSNPN(
         #return the SNPN output as qza
         return snpn_out
         
+# Name: infoSumOfProbes
+# Process: runs pepsirf's info sum of probes module
+# Method inputs/parameters: input, outfile, pepsirf_binary
+# Method outputs/Returned: the sum of probes names tsv
+# Dependencies: subprocess, os, tempfile
 def infoSumOfProbes(
     input: PepsirfContingencyTSVFormat,
     outfile: str = "./info.out",

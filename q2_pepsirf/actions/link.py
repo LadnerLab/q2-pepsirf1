@@ -2,6 +2,12 @@ import subprocess, os
 import tempfile, qiime2
 from q2_pepsirf.format_types import PeptideFastaFmt, ProteinFastaFmt, PepsirfLinkTSVFormat
 
+# Name: link
+# Process: runs pepsirf's link module
+# Method inputs/parameters: protein_file, peptide_file, meta, 
+# kmer_size, kmer_redundancy_control, outfile, pepsirf_binary
+# Method outputs/Returned: the link tsv
+# Dependencies: subprocess, os, tempfile
 def link(
     protein_file: ProteinFastaFmt,
     peptide_file: PeptideFastaFmt,
