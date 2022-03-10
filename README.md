@@ -23,6 +23,10 @@ Visit: https://ladnerlab.github.io/pepsirf-q2-plugin-docs/Pepsirf_Plugins/q2-pep
 
 Visit: https://ladnerlab.github.io/pepsirf-q2-plugin-docs/Pepsirf_Plugins/q2-pepsirf1/#updating for updating documentation on q2-pepsirf.
 
+## Tutorial
+
+Visit: https://ladnerlab.github.io/pepsirf-q2-plugin-docs/tutorials/pepsirf-tutorial/ for a tutorial on select modules.
+
 ## Qiime Import
 #### Raw Data Example:
 ```
