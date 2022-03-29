@@ -381,7 +381,7 @@ class ProteinAlignmentFormat(model.TextFileFormat):
                         'TSV does not start with "ProtName"')
 
 
-PrtoeinAlignmentDirFmt = model.SingleFileDirectoryFormat(
-    'PrtoeinAlignmentDirFmt',
+ProteinAlignmentDirFmt = model.SingleFileDirectoryFormat(
+    'ProteinAlignmentDirFmt',
     'protein_alignment.tsv',
     ProteinAlignmentFormat)
