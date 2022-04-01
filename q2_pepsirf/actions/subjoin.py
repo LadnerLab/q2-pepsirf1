@@ -10,6 +10,7 @@ from q2_pepsirf.format_types import PepsirfContingencyTSVFormat, SubjoinMultiFil
 # Dependencies: subprocess, os, tempfile
 def subjoin(
     input_type: str = "raw",
+    multi_file_input: list = None,
     multi_file: SubjoinMultiFileFmt = None,
     subjoin_input: str = None,
     filter_peptide_names: bool = False,
@@ -21,7 +22,8 @@ def subjoin(
     tsv_output = PepsirfContingencyTSVFormat()
 
     #collect absolute filepaths for input files and binary if it is a file
-    multi_file = "'%s'" % (str(multi_file))
+    if multi_file:
+        multi_file = "'%s'" % (str(multi_file))
 
     if os.path.isfile(pepsirf_binary):
         pepsirf_binary = "'%s'" % (os.path.abspath(pepsirf_binary))
@@ -37,6 +39,11 @@ def subjoin(
         elif subjoin_input:
             cmd = "%s subjoin -i %s -d %s -o %s" % (
                 pepsirf_binary, subjoin_input, duplicate_evaluation, tsv_output
+            )
+        elif multi_file_input:
+            mf_input = "-i " + " -i ".join(multi_file_input)
+            cmd = "%s subjoin %s -d %s -o %s" % (
+                pepsirf_binary, mf_input, duplicate_evaluation, tsv_output
             )
 
     if filter_peptide_names:
