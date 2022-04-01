@@ -507,6 +507,7 @@ plugin.methods.register_function(
                 'multi_file': MultiFile
         },
         parameters={
+                'multi_file_input': List[Str],
                 'pepsirf_binary': Str,
                 'input_type': s_approach,
                 'outfile': Str,
@@ -515,7 +516,7 @@ plugin.methods.register_function(
                 'duplicate_evaluation': Str%Choices("include", "combine", "ignore")
         },
         outputs=[
-                ('subjoin_output', s_out)
+                ('subjoin_output', FeatureTable[s_out])
         ],
         input_descriptions={
                 'multi_file': "The name of a tab-delimited file containing score matrix and sample name "
@@ -529,6 +530,10 @@ plugin.methods.register_function(
                         "from the input matrix should be included in the output."
         },
         parameter_descriptions={
+                'multi_file_input': "To use multiple name lists with multiple score matrices, include this argument "
+                                "with a list of file names. Optionally, a name list can be omitted if all samples "
+                                "from the input matrix should be included in the output. "
+                                "Ex:(file1,file1_samples file2,file2_samples) or Ex:(file1 file2 file3).",
                 'pepsirf_binary': "The binary to call pepsirf on your system.",
                 'input_type': "Specify the type of file being inputted into subjoin, in order to produce the correct "
                         "output file format type. raw = FeatureTable[RawCounts], col_sum = FeatureTable[Normed], etc.",
@@ -542,10 +547,7 @@ plugin.methods.register_function(
                                 "but can optionally have 2. If 2 tab-delimited names are included on one "
                                 "line, the name in the first column should match the name in the input "
                                 "matrix file, while the name in the second column will be output. "
-                                "Therefore, this allows for the renaming of samples in the output. To use "
-                                "multiple name lists with multiple score matrices, include this argument "
-                                "multiple times. Optionally, a name list can be omitted if all samples "
-                                "from the input matrix should be included in the output.",
+                                "Therefore, this allows for the renaming of samples in the output.",
                 'filter_peptide_names':"Flag to include if the name lists input to the input or multi_file "
                                         "options should be treated as peptide (i.e. row) names instead of sample "
                                         "(i.e. column) names. With the inclusion of this flag, the input files "
