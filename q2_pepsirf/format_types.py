@@ -372,7 +372,7 @@ PepsirfDemuxDiagnosticDirFmt = model.SingleFileDirectoryFormat(
     PepsirfDemuxDiagnosticFormat)
 
 # create a format for a protein alignment file
-class ProteinAlignmentFormat(model.TextFileFormat):
+class ProteinAlignmentManifestFormat(model.TextFileFormat):
     def _validate_(self, level='min'):
         with self.open() as fh:
             for _, line in zip(range(1), fh):
@@ -380,8 +380,18 @@ class ProteinAlignmentFormat(model.TextFileFormat):
                     raise model.ValidationError(
                         'TSV does not start with "ProtName"')
 
+class PeptideToProteinAlignmentFormat(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        #validate header
+        pass
 
-ProteinAlignmentDirFmt = model.SingleFileDirectoryFormat(
-    'ProteinAlignmentDirFmt',
-    'protein_alignment.tsv',
-    ProteinAlignmentFormat)
+
+class ProteinAlignmentDirFormat(model.DirectoryFormat):
+    manifest=model.File(
+        "manifest.txt",
+        format=ProteinAlignmentManifestFormat
+    )
+    alignments=model.FileCollection(
+        r'.+Aligned\.txt',
+        format=PeptideToProteinAlignmentFormat,
+    )

@@ -21,7 +21,7 @@ from qiime2.plugin import (Plugin,
 from q2_pepsirf.format_types import (
     EnrichedPeptideDirFmt, Normed, NormedDifference, 
     NormedDiffRatio, NormedRatio, NormedSized, 
-    PairwiseEnrichment, PeptideIDListFmt, ProteinAlignment, ProteinAlignmentFormat, ProteinAlignmentDirFmt, Zscore, RawCounts,
+    PairwiseEnrichment, PeptideIDListFmt, ProteinAlignment, Zscore, RawCounts,
     PepsirfContingencyTSVDirFmt, PepsirfContingencyTSVFormat, 
     ZscoreNan, ZscoreNanDirFmt, ZscoreNanFormat, PeptideBinFormat,
     PeptideBinDirFmt, PeptideBins, PepsirfInfoSumOfProbesDirFmt,
@@ -38,7 +38,8 @@ from q2_pepsirf.format_types import (
     PepsirfDemuxSampleListDirFmt, DemuxIndex, PepsirfDemuxIndexDirFmt, PepsirfDemuxIndexFmt,
     DemuxLibrary, PepsirfDemuxLibraryDirFmt, PepsirfDemuxLibraryFmt, DemuxFastq, PepsirfDemuxFastqDirFmt,
     PepsirfDemuxFastqFmt, DemuxDiagnostic, PepsirfDemuxDiagnosticDirFmt, PepsirfDemuxDiagnosticFormat,
-    ProteinAlignmentFormat, ProteinAlignmentDirFmt, ProteinAlignment
+    ProteinAlignmentManifestFormat, ProteinAlignment, PeptideToProteinAlignmentFormat,
+    ProteinAlignmentDirFormat
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
@@ -105,8 +106,10 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         PepsirfDemuxFastqDirFmt,
                         PepsirfDemuxDiagnosticFormat,
                         PepsirfDemuxDiagnosticDirFmt,
-                        ProteinAlignmentFormat,
-                        ProteinAlignmentDirFmt)
+                        ProteinAlignmentManifestFormat,
+                        PeptideToProteinAlignmentFormat,
+                        ProteinAlignmentDirFormat
+                        )
 
 # register all semantic types
 plugin.register_semantic_types(
@@ -209,7 +212,7 @@ plugin.register_semantic_type_to_format(
 )
 plugin.register_semantic_type_to_format(
         ProteinAlignment,
-        ProteinAlignmentDirFmt
+        ProteinAlignmentDirFormat
 )
 
 # create a type map to change outputs dependent on str choice
