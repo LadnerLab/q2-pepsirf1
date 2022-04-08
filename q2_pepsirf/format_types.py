@@ -388,10 +388,13 @@ class PeptideToProteinAlignmentFormat(model.TextFileFormat):
 
 class ProteinAlignmentDirFormat(model.DirectoryFormat):
     manifest=model.File(
-        "manifest.txt",
+        "manifest.tsv",
         format=ProteinAlignmentManifestFormat
     )
     alignments=model.FileCollection(
         r'.+Aligned\.txt',
         format=PeptideToProteinAlignmentFormat,
     )
+    @alignments.set_path_maker
+    def alignment_pathmaker(self, name):
+        return "%sAligned.txt" % name 
