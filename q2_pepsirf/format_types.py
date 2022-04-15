@@ -36,6 +36,7 @@ DemuxLibrary = SemanticType('DemuxLibrary')
 DemuxFastq = SemanticType('DemuxFastq')
 DemuxDiagnostic = SemanticType('DemuxDiagnostic')
 ProteinAlignment = SemanticType('ProteinAlignment')
+MutantReference = SemanticType('MutantReference')
 
 # create a format for a featuretable file
 class PepsirfContingencyTSVFormat(model.TextFileFormat):
@@ -398,3 +399,18 @@ class ProteinAlignmentDirFormat(model.DirectoryFormat):
     @alignments.set_path_maker
     def alignment_pathmaker(self, name):
         return "%sAligned.txt" % name 
+
+# create a format for a demux diagnostic file
+class MutantReferenceFileFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        with self.open() as fh:
+            for _, line in zip(range(1), fh):
+                if not line.startswith('CodeName\t'):
+                    raise model.ValidationError(
+                        'TSV does not start with "CodeName"')
+
+
+MutantReferenceDirFmt = model.SingleFileDirectoryFormat(
+    'MutantReferenceDirFmt',
+    'references.tsv',
+    MutantReferenceFileFmt)
