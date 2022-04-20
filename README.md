@@ -27,10 +27,7 @@ Visit: https://ladnerlab.github.io/pepsirf-q2-plugin-docs/Pepsirf_Plugins/q2-pep
 
 Visit: https://ladnerlab.github.io/pepsirf-q2-plugin-docs/tutorials/pepsirf-tutorial/ for a tutorial on select modules.
 
-## Qiime Import
+## Qiime Import and Export
 
-Visit: https://ladnerlab.github.io/pepsirf-q2-plugin-docs/export-imports/import-exports/#qiime-imports
+Visit: https://ladnerlab.github.io/pepsirf-q2-plugin-docs/export-imports/
 
-
-## Qiime Export
-Visit: https://ladnerlab.github.io/pepsirf-q2-plugin-docs/export-imports/import-exports/#qiime-exports
