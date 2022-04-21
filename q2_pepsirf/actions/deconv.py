@@ -1,6 +1,6 @@
 import subprocess, os
 from distutils.dir_util import copy_tree
-import tempfile, qiime2
+import tempfile, qiime2, qiime2.util
 from q2_pepsirf.format_types import (
     PeptideIDListFmt, PepsirfLinkTSVFormat, PepsirfDMPFormat,
     EnrichedPeptideDirFmt, PepsirfDeconvSingularFormat, ScorePerRoundDirFmt,
@@ -132,10 +132,14 @@ def deconv_batch(
 
     #create a temp directory to run pepsirf in
     with tempfile.TemporaryDirectory() as tempdir:
+        temp_enriched = os.path.join(tempdir, "enriched")
+        os.mkdir(temp_enriched)
+        for name, fmt in enriched_dir.pairwise.iter_views(PeptideIDListFmt) :
+            qiime2.util.duplicate(str(fmt), os.path.join(temp_enriched, name))
 
         #start command with required/defualt parameters
         cmd = collect_cmd(
-            pepsirf_binary,enriched, threshold, linked,
+            pepsirf_binary, temp_enriched, threshold, linked,
             scoring_strategy, score_tie_threshold, score_overlap_threshold,
              dir_out, score_filtering, id_name_map, single_threaded,
              os.path.join(tempdir, "out_score"))
