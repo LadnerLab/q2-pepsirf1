@@ -704,9 +704,9 @@ deconv_shared_parameters_descript = {
                                 "if you only want only one thread to be used."
         }
 
-# action set up for deconv_singluar module
+# action set up for deconv_singular module
 plugin.methods.register_function(
-        function=deconv.deconv_singluar,
+        function=deconv.deconv_singular,
         inputs={
                 'enriched': PeptideIDList,
                 **deconv_shared_inputs
