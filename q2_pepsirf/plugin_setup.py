@@ -39,7 +39,7 @@ from q2_pepsirf.format_types import (
     DemuxLibrary, PepsirfDemuxLibraryDirFmt, PepsirfDemuxLibraryFmt, DemuxFastq, PepsirfDemuxFastqDirFmt,
     PepsirfDemuxFastqFmt, DemuxDiagnostic, PepsirfDemuxDiagnosticDirFmt, PepsirfDemuxDiagnosticFormat,
     ProteinAlignmentManifestFormat, ProteinAlignment, PeptideToProteinAlignmentFormat,
-    ProteinAlignmentDirFormat
+    ProteinAlignmentDirFormat, MutantReference, MutantReferenceFileFmt, MutantReferenceDirFmt
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
@@ -108,7 +108,9 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         PepsirfDemuxDiagnosticDirFmt,
                         ProteinAlignmentManifestFormat,
                         PeptideToProteinAlignmentFormat,
-                        ProteinAlignmentDirFormat
+                        ProteinAlignmentDirFormat,
+                        MutantReferenceFileFmt,
+                        MutantReferenceDirFmt
                         )
 
 # register all semantic types
@@ -213,6 +215,10 @@ plugin.register_semantic_type_to_format(
 plugin.register_semantic_type_to_format(
         ProteinAlignment,
         ProteinAlignmentDirFormat
+)
+plugin.register_semantic_type_to_format(
+        MutantReference,
+        MutantReferenceDirFmt
 )
 
 # create a type map to change outputs dependent on str choice
@@ -698,9 +704,9 @@ deconv_shared_parameters_descript = {
                                 "if you only want only one thread to be used."
         }
 
-# action set up for deconv_singluar module
+# action set up for deconv_singular module
 plugin.methods.register_function(
-        function=deconv.deconv_singluar,
+        function=deconv.deconv_singular,
         inputs={
                 'enriched': PeptideIDList,
                 **deconv_shared_inputs

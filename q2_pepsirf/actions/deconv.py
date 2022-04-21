@@ -36,7 +36,7 @@ def collect_cmd(
 
     return cmd
     
-# Name: deconv_singluar
+# Name: deconv_singular
 # Process: runs PepSIRF's deconv module in singular mode
 # Method inputs/parameters: enriched, threshold, linked,
 # scoring_stratgey, score_filtering, score_tie_threshold,
@@ -45,7 +45,7 @@ def collect_cmd(
 # Method outputs/Returned: deconv tsv output and score-per-round
 # output
 # Dependencies: Subprocess, os, copy_tree, tempfile
-def deconv_singluar(
+def deconv_singular(
     enriched: PeptideIDListFmt,
     threshold: int,
     linked: PepsirfLinkTSVFormat,
@@ -115,9 +115,9 @@ def deconv_batch(
     single_threaded: bool = False,
     remove_file_types: bool = False,
     outfile: str = "./deconv.out",
-    pepsirf_binary: str = "pepsirf") -> (PepsirfDeconvBatchDirFmt, ScorePerRoundDirFmt, PeptideAssignMapDirFmt): ## TODO: add singluar mode output and score_pre_round dir and map dir
+    pepsirf_binary: str = "pepsirf") -> (PepsirfDeconvBatchDirFmt, ScorePerRoundDirFmt, PeptideAssignMapDirFmt): ## TODO: add singular mode output and score_pre_round dir and map dir
     
-    ## TODO: add singluar mode output and score_pre_round dir and map dir
+    ## TODO: add singular mode output and score_pre_round dir and map dir
     dir_out = PepsirfDeconvBatchDirFmt()
     score_per_round = ScorePerRoundDirFmt()
     map_dir = PeptideAssignMapDirFmt()
