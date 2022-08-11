@@ -387,18 +387,28 @@ class PeptideToProteinAlignmentFormat(model.TextFileFormat):
         pass
 
 
-class ProteinAlignmentDirFormat(model.DirectoryFormat):
-    manifest=model.File(
-        "manifest.tsv",
-        format=ProteinAlignmentManifestFormat
-    )
-    alignments=model.FileCollection(
-        r'.+Aligned\.txt',
-        format=PeptideToProteinAlignmentFormat,
-    )
-    @alignments.set_path_maker
-    def alignment_pathmaker(self, name):
-        return "%sAligned.txt" % name 
+# class ProteinAlignmentDirFormat(model.DirectoryFormat):
+#     manifest=model.File(
+#         "manifest.tsv",
+#         format=ProteinAlignmentManifestFormat
+#     )
+#     alignments=model.FileCollection(
+#         r'.+Aligned\.txt',
+#         format=PeptideToProteinAlignmentFormat,
+#     )
+#     @alignments.set_path_maker
+#     def alignment_pathmaker(self, name):
+#         return "%sAligned.txt" % name 
+
+class ProteinAlignmentFmt(model.TextFileFormat):
+    def _validate_(self, level='min'):
+        pass
+
+ProteinAlignmentDirFormat = model.SingleFileDirectoryFormat(
+    'ProteinAlignmentDirFormat',
+    'manifest.tsv',
+    ProteinAlignmentFmt)
+
 
 # create a format for a demux diagnostic file
 class MutantReferenceFileFmt(model.TextFileFormat):

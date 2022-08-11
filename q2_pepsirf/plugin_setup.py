@@ -39,7 +39,7 @@ from q2_pepsirf.format_types import (
     DemuxLibrary, PepsirfDemuxLibraryDirFmt, PepsirfDemuxLibraryFmt, DemuxFastq, PepsirfDemuxFastqDirFmt,
     PepsirfDemuxFastqFmt, DemuxDiagnostic, PepsirfDemuxDiagnosticDirFmt, PepsirfDemuxDiagnosticFormat,
     ProteinAlignmentManifestFormat, ProteinAlignment, PeptideToProteinAlignmentFormat,
-    ProteinAlignmentDirFormat, MutantReference, MutantReferenceFileFmt, MutantReferenceDirFmt
+    ProteinAlignmentDirFormat, MutantReference, MutantReferenceFileFmt, MutantReferenceDirFmt, ProteinAlignmentFmt
     )
 import q2_pepsirf.actions as actions
 import q2_pepsirf.actions.zscore as zscore
@@ -108,6 +108,7 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         PepsirfDemuxDiagnosticDirFmt,
                         ProteinAlignmentManifestFormat,
                         PeptideToProteinAlignmentFormat,
+                        ProteinAlignmentFmt,
                         ProteinAlignmentDirFormat,
                         MutantReferenceFileFmt,
                         MutantReferenceDirFmt
