@@ -13,17 +13,15 @@ from q2_pepsirf.format_types import (
 # Method inputs/parameters: column, outpath
 # Method outputs/Returned: the pairs result
 # Dependencies: itertools
-def _make_pairs_list(column, outpath):
+def _make_reps_list(column, outpath):
     series = column.to_series()
     pairs = {k: v.index for k,v in series.groupby(series)}
-    result = []
-    for _, ids in pairs.items():
-        result.append(list(itertools.combinations(ids, 2)))
-    with open(outpath, 'w') as fh:
-        for pair in result:
-            for a, b in pair:
-                fh.write(a + '\t' + b + '\n')
-    return result
+    with open( outpath, 'w' ) as of:
+        for _, reps in pairs.items():
+            for rep in reps[:len(reps) - 1]:
+                of.write( rep + "\t" )
+            of.write( reps[ len(reps) - 1] )
+            of.write( "\n" )
 
 # Name: enrich
 # Process: runs pepsirf's enrich module
@@ -56,10 +54,10 @@ def enrich(
     #open temp directory
     with tempfile.TemporaryDirectory() as tempdir:
 
-        #make pairs file with given source metadata
+        # make pairs file with given source metadata
         pairsFile = os.path.join(tempdir, 'pairs.tsv')
-        _make_pairs_list(source, pairsFile)
-
+        _make_reps_list(source, pairsFile)
+        
         #set up default threshold files and peptide enrichment suffix
         threshFile = os.path.join(tempdir, "tempThreshFile.tsv")
         outSuffix = "_enriched.txt"
