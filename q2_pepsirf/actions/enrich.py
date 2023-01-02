@@ -8,12 +8,12 @@ from q2_pepsirf.format_types import (
     EnrichThreshFileFormat
     )
 
-# Name: _make_pair_list
-# Process: function used to take source metadata and create pairs files
+# Name: _make_reps_file
+# Process: function used to take source metadata and create replicates files
 # Method inputs/parameters: column, outpath
-# Method outputs/Returned: the pairs result
+# Method outputs/Returned: None
 # Dependencies: itertools
-def _make_reps_list(column, outpath):
+def _make_reps_file(column, outpath):
     series = column.to_series()
     pairs = {k: v.index for k,v in series.groupby(series)}
     with open( outpath, 'w' ) as of:
@@ -56,7 +56,7 @@ def enrich(
 
         # make pairs file with given source metadata
         pairsFile = os.path.join(tempdir, 'pairs.tsv')
-        _make_reps_list(source, pairsFile)
+        _make_reps_file(source, pairsFile)
         
         #set up default threshold files and peptide enrichment suffix
         threshFile = os.path.join(tempdir, "tempThreshFile.tsv")
