@@ -19,10 +19,10 @@ from qiime2.plugin import (Plugin,
                         Bool)
 
 from q2_pepsirf.format_types import (
-    EnrichedPeptideDirFmt, Normed, NormedDifference, 
-    NormedDiffRatio, NormedRatio, NormedSized, 
+    EnrichedPeptideDirFmt, Normed, NormedDifference,
+    NormedDiffRatio, NormedRatio, NormedSized,
     PairwiseEnrichment, PeptideIDListFmt, ProteinAlignment, Zscore, RawCounts,
-    PepsirfContingencyTSVDirFmt, PepsirfContingencyTSVFormat, 
+    PepsirfContingencyTSVDirFmt, PepsirfContingencyTSVFormat,
     ZscoreNan, ZscoreNanDirFmt, ZscoreNanFormat, PeptideBinFormat,
     PeptideBinDirFmt, PeptideBins, PepsirfInfoSumOfProbesDirFmt,
     PepsirfInfoSumOfProbesFmt, InfoSumOfProbes, PepsirfInfoSNPNFormat,
@@ -67,8 +67,8 @@ plugin.register_formats(PepsirfContingencyTSVFormat,
                         PeptideIDListFmt,
                         EnrichedPeptideDirFmt,
                         ZscoreNanFormat,
-                        ZscoreNanDirFmt, 
-                        PeptideBinFormat, 
+                        ZscoreNanDirFmt,
+                        PeptideBinFormat,
                         PeptideBinDirFmt,
                         PepsirfInfoSNPNDirFmt,
                         PepsirfInfoSNPNFormat,
@@ -122,7 +122,7 @@ plugin.register_semantic_types(
 plugin.register_semantic_type_to_format(
         FeatureTable[
                 Normed | NormedDifference |
-                NormedDiffRatio | NormedRatio 
+                NormedDiffRatio | NormedRatio
                 | NormedSized | Zscore | RawCounts],
         PepsirfContingencyTSVDirFmt)
 plugin.register_semantic_type_to_format(
@@ -343,6 +343,7 @@ plugin.methods.register_function(
         parameters={
                 'exact_z_thresh': Str,
                 'raw_constraint': Int % Range(0, None),
+                'flex_reps': Bool,
                 'enrichment_failure': Bool,
                 'truncate': Bool,
                 'pepsirf_binary': Str,
@@ -521,7 +522,7 @@ plugin.methods.register_function(
                 'pepsirf_binary': Str,
                 'input_type': s_approach,
                 'outfile': Str,
-                'subjoin_input': Str, 
+                'subjoin_input': Str,
                 'filter_peptide_names': Bool,
                 'duplicate_evaluation': Str%Choices("include", "combine", "ignore")
         },
@@ -761,7 +762,7 @@ plugin.methods.register_function(
         input_descriptions={
                 'enriched_dir': "Name of a directory containing files, that contain the names of enriched "
                                "peptides, one per line. Each Peptide contained within these files should have "
-                               "a corresponding entry in the '--linked' input file.", 
+                               "a corresponding entry in the '--linked' input file.",
                 **deconv_shared_input_descript
         },
         parameter_descriptions={
