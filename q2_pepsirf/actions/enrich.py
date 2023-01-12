@@ -1,12 +1,13 @@
 from posixpath import abspath
-import subprocess, os, csv
-import tempfile, qiime2, itertools
-
 from q2_pepsirf.format_types import (
-    EnrichedPeptideDirFmt, 
-    PepsirfContingencyTSVFormat,
-    EnrichThreshFileFormat
+    EnrichedPeptideDirFmt, PepsirfContingencyTSVFormat, EnrichThreshFileFormat
     )
+import subprocess
+import os
+import csv
+import tempfile
+import qiime2
+import itertools
 
 # Name: _make_pair_list
 # Process: function used to take source metadata and create pairs files
@@ -17,12 +18,15 @@ def _make_pairs_list(column, outpath):
     series = column.to_series()
     pairs = {k: v.index for k,v in series.groupby(series)}
     result = []
+
     for _, ids in pairs.items():
         result.append(list(itertools.combinations(ids, 2)))
+
     with open(outpath, 'w') as fh:
         for pair in result:
             for a, b in pair:
                 fh.write(a + '\t' + b + '\n')
+
     return result
 
 # Name: enrich
@@ -33,31 +37,31 @@ def _make_pairs_list(column, outpath):
 # Method outputs/Returned: the enriched directory
 # Dependencies: subprocess, os, csv, tempfile
 def enrich(
-    source: qiime2.CategoricalMetadataColumn,
-    thresh_file: EnrichThreshFileFormat = None,
-    zscores: PepsirfContingencyTSVFormat = None,
-    col_sum: PepsirfContingencyTSVFormat = None,
-    exact_z_thresh: str = None,
-    exact_cs_thresh: str = None,
-    raw_scores: PepsirfContingencyTSVFormat = None,
-    raw_constraint: int = None,
-    enrichment_failure: bool = False,
-    truncate: bool = False,
-    outfile: str = "./enrich.out",
-    pepsirf_binary: str = "pepsirf") -> EnrichedPeptideDirFmt:
+        source: qiime2.CategoricalMetadataColumn,
+        thresh_file: EnrichThreshFileFormat = None,
+        zscores: PepsirfContingencyTSVFormat = None,
+        col_sum: PepsirfContingencyTSVFormat = None,
+        exact_z_thresh: str = None,
+        exact_cs_thresh: str = None,
+        raw_scores: PepsirfContingencyTSVFormat = None,
+        raw_constraint: int = None,
+        enrichment_failure: bool = False,
+        truncate: bool = False,
+        outfile: str = "./enrich.out",
+        pepsirf_binary: str = "pepsirf") -> EnrichedPeptideDirFmt:
 
     #create EnrichedPeptideDirFmt output
     dir_fmt_output = EnrichedPeptideDirFmt()
 
     #get absolute file path to pepsirf if it is a file
     if os.path.isfile(pepsirf_binary):
-        pepsirf_binary = "'%s'" % (os.path.abspath(pepsirf_binary))
+        pepsirf_binary = "%s" % (os.path.abspath(pepsirf_binary))
 
     #open temp directory
     with tempfile.TemporaryDirectory() as tempdir:
 
         #make pairs file with given source metadata
-        tmp_pairs_file = os.path.join(tempdir, 'pairs.tsv')
+        tmp_pairs_file = os.path.join(tempdir, "pairs.tsv")
         _make_pairs_list(source, tmp_pairs_file)
 
         #set up default threshold files and peptide enrichment suffix
@@ -68,8 +72,8 @@ def enrich(
         if not thresh_file:
 
             #create a temporary thresh file in the temporary directory
-            with open(tmp_thresh_file, 'w', newline='') as out_file:
-                    tsv_writer = csv.writer(out_file, delimiter='\t')
+            with open(tmp_thresh_file, "w", newline="") as out_file:
+                    tsv_writer = csv.writer(out_file, delimiter="\t")
                     tsv_writer.writerow([str(zscores), exact_z_thresh])
                     tsv_writer.writerow([str(col_sum), exact_cs_thresh])
         
@@ -92,7 +96,7 @@ def enrich(
 
 
         #add outfile to command
-        cmd += ' >> %s' % (outfile)
+        cmd += " >> %s" % (outfile)
 
         #run command
         s = subprocess.run(cmd, shell=True, check=True)
@@ -116,3 +120,4 @@ def enrich(
 
         #return enrich directory as qza
         return dir_fmt_output
+
