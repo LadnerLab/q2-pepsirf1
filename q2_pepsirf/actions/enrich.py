@@ -57,27 +57,27 @@ def enrich(
     with tempfile.TemporaryDirectory() as tempdir:
 
         #make pairs file with given source metadata
-        pairsFile = os.path.join(tempdir, 'pairs.tsv')
-        _make_pairs_list(source, pairsFile)
+        tmp_pairs_file = os.path.join(tempdir, 'pairs.tsv')
+        _make_pairs_list(source, tmp_pairs_file)
 
         #set up default threshold files and peptide enrichment suffix
-        threshFile = os.path.join(tempdir, "tempThreshFile.tsv")
-        outSuffix = "_enriched.txt"
+        tmp_thresh_file = os.path.join(tempdir, "tempThreshFile.tsv")
+        out_suffix = "_enriched.txt"
 
         #create threshold file if not provided
         if not thresh_file:
 
             #create a temporary thresh file in the temporary directory
-            with open(threshFile, 'w', newline='') as out_file:
+            with open(tmp_thresh_file, 'w', newline='') as out_file:
                     tsv_writer = csv.writer(out_file, delimiter='\t')
                     tsv_writer.writerow([str(zscores), exact_z_thresh])
                     tsv_writer.writerow([str(col_sum), exact_cs_thresh])
         
         else:
-            threshFile = str(thresh_file)
+            tmp_thresh_file = str(thresh_file)
 
         #put together command
-        cmd = "%s enrich -t %s -s %s -x %s -o %s" % (pepsirf_binary, threshFile, pairsFile, outSuffix, str(dir_fmt_output))
+        cmd = "%s enrich -t %s -s %s -x %s -o %s" % (pepsirf_binary, tmp_thresh_file, tmp_pairs_file, out_suffix, str(dir_fmt_output))
 
         #add optionals to command
         if raw_scores:
