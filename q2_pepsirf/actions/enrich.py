@@ -1,5 +1,5 @@
 from posixpath import abspath
-from q2_pepsirf.format_types import (
+from q2_pepsirf.format_types import(
     EnrichedPeptideDirFmt, PepsirfContingencyTSVFormat, EnrichThreshFileFormat
     )
 import subprocess
