@@ -27,7 +27,6 @@ def zscore(
 
     #collect absolute file path names for inputs
     scores = "%s" % (os.path.abspath(str(scores)))
-
     bins = "%s" % (os.path.abspath(str(bins)))
 
     #collect absolute file path name if pepsirf binary is file

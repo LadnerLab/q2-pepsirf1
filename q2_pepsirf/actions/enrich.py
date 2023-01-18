@@ -94,7 +94,6 @@ def enrich(
         if truncate:
             cmd += " --output_filename_truncate"
 
-
         #add outfile to command
         cmd += " >> %s" % (outfile)
 

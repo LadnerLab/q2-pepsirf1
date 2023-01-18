@@ -13,7 +13,8 @@ from q2_pepsirf.format_types import(
 # bin_size, round_to, outfile, pepsirf_binary
 # Method outputs/Returned: bin file
 # Dependencies: subprocess, os, tempfile, sys
-def bin(scores: PepsirfContingencyTSVFormat,
+def bin(
+        scores: PepsirfContingencyTSVFormat,
         allow_other_normalization: bool = False,
         bin_size: int = 300,
         round_to: int = 0,

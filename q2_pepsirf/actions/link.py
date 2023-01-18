@@ -24,7 +24,6 @@ def link(
 
     #collect absolute filepaths for input files and binary if it is a file
     protein_file = "%s" % (str(protein_file))
-
     peptide_file = "%s" % (str(peptide_file))
 
     if os.path.isfile(pepsirf_binary):

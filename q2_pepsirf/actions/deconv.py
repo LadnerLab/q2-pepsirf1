@@ -120,7 +120,6 @@ def deconv_batch(
         outfile: str = "./deconv.out",
         pepsirf_binary: str = "pepsirf") -> (PepsirfDeconvBatchDirFmt, ScorePerRoundDirFmt, PeptideAssignMapDirFmt):
     
-    # TODO: add singular mode output and score_pre_round dir and map dir
     dir_out = PepsirfDeconvBatchDirFmt()
     score_per_round = ScorePerRoundDirFmt()
     map_dir = PeptideAssignMapDirFmt()
