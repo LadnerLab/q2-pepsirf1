@@ -1,8 +1,10 @@
 from distutils.dir_util import copy_tree
-from q2_pepsirf.format_types import(PeptideIDListFmt, PepsirfLinkTSVFormat, PepsirfDMPFormat,
-                                    EnrichedPeptideDirFmt, PepsirfDeconvSingularFormat, ScorePerRoundDirFmt,
-                                    PepsirfDeconvBatchDirFmt, PeptideAssignMapDirFmt
-                                    )
+from q2_pepsirf.format_types import(
+    PeptideIDListFmt, PepsirfLinkTSVFormat, PepsirfDMPFormat,
+    EnrichedPeptideDirFmt, PepsirfDeconvSingularFormat, ScorePerRoundDirFmt,
+    PepsirfDeconvBatchDirFmt, PeptideAssignMapDirFmt
+)
+
 import os
 import subprocess
 import tempfile
@@ -22,11 +24,16 @@ def collect_cmd(
         id_name_map, single_threaded, score_per_round):
 
     #start command with required/defualt parameters
-    cmd = "%s deconv -e %s -t %s -l %s --scoring_strategy %s --score_tie_threshold %s --score_overlap_threshold %s -o %s -s %s" % (
-        pepsirf_binary, enriched, threshold,
-        linked, scoring_strategy, score_tie_threhold,
-        score_overlap_threshold, tsv_out, score_per_round
+    cmd = (
+        "%s deconv -e %s -t %s -l "
+        "%s --scoring_strategy %s --score_tie_threshold %s "
+        "--score_overlap_threshold %s -o %s -s %s"
+        % (
+            pepsirf_binary, enriched, threshold,
+            linked, scoring_strategy, score_tie_threhold,
+            score_overlap_threshold, tsv_out, score_per_round
         )
+    )
 
     #check if optional parameters are inputted and add to command
     if score_filtering:
@@ -59,32 +66,34 @@ def deconv_singular(
         id_name_map: PepsirfDMPFormat = None,
         single_threaded: bool = False,
         outfile: str = "./deconv.out",
-        pepsirf_binary: str = "pepsirf") -> (PepsirfDeconvSingularFormat, ScorePerRoundDirFmt):
+        pepsirf_binary: str = "pepsirf"
+    ) -> (PepsirfDeconvSingularFormat, ScorePerRoundDirFmt):
     
     #collect temp file names
     tsv_out = PepsirfDeconvSingularFormat()
     score_per_round = ScorePerRoundDirFmt()
 
     #collect absolute filepaths for input files and binary if it is a file
-    enriched = "%s" % (str(enriched))
+    enriched = "%s" % str(enriched)
 
-    linked = "%s" % (str(linked))
+    linked = "%s" % str(linked)
 
     if os.path.isfile(pepsirf_binary):
-        pepsirf_binary = "%s" % (os.path.abspath(pepsirf_binary))
+        pepsirf_binary = "%s" % os.path.abspath(pepsirf_binary)
 
     #create a temp directory to run pepsirf in
     with tempfile.TemporaryDirectory() as tempdir:
 
         #start command with required/defualt parameters
-        cmd = collect_cmd(pepsirf_binary, enriched, threshold,
-                          linked, scoring_strategy, score_tie_threshold,
-                          score_overlap_threshold, tsv_out, score_filtering,
-                          id_name_map, single_threaded, os.path.join(tempdir, "out_score")
-                          )
+        cmd = collect_cmd(
+            pepsirf_binary, enriched, threshold,
+            linked, scoring_strategy, score_tie_threshold,
+            score_overlap_threshold, tsv_out, score_filtering,
+            id_name_map, single_threaded, os.path.join(tempdir, "out_score")
+        )
 
         #add outfile to command
-        cmd += " >> %s" % (outfile)
+        cmd += " >> %s" % outfile
 
         #run command in the command line
         subprocess.run(cmd, shell=True, check=True)
@@ -118,18 +127,22 @@ def deconv_batch(
         single_threaded: bool = False,
         remove_file_types: bool = False,
         outfile: str = "./deconv.out",
-        pepsirf_binary: str = "pepsirf") -> (PepsirfDeconvBatchDirFmt, ScorePerRoundDirFmt, PeptideAssignMapDirFmt):
+        pepsirf_binary: str = "pepsirf"
+    ) -> (
+        PepsirfDeconvBatchDirFmt, ScorePerRoundDirFmt,
+        PeptideAssignMapDirFmt
+    ):
     
     dir_out = PepsirfDeconvBatchDirFmt()
     score_per_round = ScorePerRoundDirFmt()
     map_dir = PeptideAssignMapDirFmt()
 
     #collect absolute filepaths for input files and binary if it is a file
-    enriched = "%s" % (str(enriched_dir))
-    linked = "%s" % (str(linked))
+    enriched = "%s" % str(enriched_dir)
+    linked = "%s" % str(linked)
 
     if os.path.isfile(pepsirf_binary):
-        pepsirf_binary = "%s" % (os.path.abspath(pepsirf_binary))
+        pepsirf_binary = "%s" % os.path.abspath(pepsirf_binary)
 
     #create a temp directory to run pepsirf in
     with tempfile.TemporaryDirectory() as tempdir:
@@ -140,15 +153,17 @@ def deconv_batch(
             qiime2.util.duplicate(str(fmt), os.path.join(temp_enriched, name))
 
         #start command with required/defualt parameters
-        cmd = collect_cmd(pepsirf_binary, temp_enriched, threshold,
-                          linked, scoring_strategy, score_tie_threshold,
-                          score_overlap_threshold, dir_out, score_filtering,
-                          id_name_map, single_threaded, os.path.join(tempdir, "out_score")
-                          )
+        cmd = collect_cmd(
+            pepsirf_binary, temp_enriched, threshold,
+            linked, scoring_strategy, score_tie_threshold,
+            score_overlap_threshold, dir_out, score_filtering,
+            id_name_map, single_threaded, os.path.join(tempdir, "out_score")
+        )
 
-        cmd += " --outfile_suffix %s --mapfile_suffix %s -p %s" % (
-            outfile_suffix, mapfile_suffix, map_dir
-            )
+        cmd += (
+            " --outfile_suffix %s --mapfile_suffix %s -p %s"
+            % (outfile_suffix, mapfile_suffix, map_dir)
+        )
 
         if remove_file_types:
             cmd += " -r"
