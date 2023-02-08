@@ -1,11 +1,13 @@
-from q2_pepsirf.format_types import(PepsirfInfoSNPNDirFmt, PepsirfInfoSNPNFormat, PepsirfInfoSumOfProbesFmt,
-                                    PepsirfContingencyTSVFormat, InfoSNPN
-                                    )
+from q2_pepsirf.format_types import(
+    PepsirfInfoSNPNDirFmt, PepsirfInfoSNPNFormat, PepsirfInfoSumOfProbesFmt,
+    PepsirfContingencyTSVFormat, InfoSNPN
+)
+
 import os
 import pandas as pd
+import qiime2
 import subprocess
 import tempfile
-import qiime2
 
 # Name: infoSNPN
 # Process: runs pepsirf's info sample/probes module
@@ -23,19 +25,24 @@ def infoSNPN(
 
     #get absolute file path to pepsirf if it is a file
     if os.path.isfile(pepsirf_binary):
-        pepsirf_binary = "%s" % (os.path.abspath(pepsirf_binary))
+        pepsirf_binary = "%s" % os.path.abspath(pepsirf_binary)
 
     #open temp directory
     with tempfile.TemporaryDirectory() as tempdir:
-
         #put together command based on get input
         if get == "samples":
-            cmd = "%s info -i %s -s %s" % (pepsirf_binary, str(input), str(snpn_out))
+            cmd = (
+                "%s info -i %s -s %s"
+                % (pepsirf_binary, str(input), str(snpn_out))
+            )
         elif get == "probes":
-            cmd = "%s info -i %s -p %s" % (pepsirf_binary, str(input), str(snpn_out))
+            cmd = (
+                "%s info -i %s -p %s"
+                % (pepsirf_binary, str(input), str(snpn_out))
+            )
 
         #add outfile to command
-        cmd += " >> %s" % (outfile)
+        cmd += " >> %s" % outfile
 
         #run command
         subprocess.run(cmd, shell=True, check=True)
@@ -58,16 +65,19 @@ def infoSumOfProbes(
 
     #get absolute file path to pepsirf if it is a file
     if os.path.isfile(pepsirf_binary):
-        pepsirf_binary = "%s" % (os.path.abspath(pepsirf_binary))
+        pepsirf_binary = "%s" % os.path.abspath(pepsirf_binary)
 
     #open temp directory
     with tempfile.TemporaryDirectory() as tempdir:
 
         #put together command
-        cmd = "%s info -i %s -c %s" % (pepsirf_binary, str(input), str(sum_of_probes_out))
+        cmd = (
+            "%s info -i %s -c %s"
+            % (pepsirf_binary, str(input), str(sum_of_probes_out))
+        )
 
         #add outfile to command
-        cmd += " >> %s" % (outfile)
+        cmd += " >> %s" % outfile
 
         #run command
         subprocess.run(cmd, shell=True, check=True)

@@ -1,13 +1,14 @@
 from posixpath import abspath
 from q2_pepsirf.format_types import(
     EnrichedPeptideDirFmt, PepsirfContingencyTSVFormat, EnrichThreshFileFormat
-    )
-import subprocess
-import os
+)
+
 import csv
-import tempfile
-import qiime2
 import itertools
+import os
+import qiime2
+import subprocess
+import tempfile
 
 # Name: _make_pair_list
 # Process: function used to take source metadata and create pairs files
@@ -22,18 +23,18 @@ def _make_pairs_list(column, outpath):
     for _, ids in pairs.items():
         result.append(list(itertools.combinations(ids, 2)))
 
-    with open(outpath, 'w') as fh:
+    with open(outpath, "w") as fh:
         for pair in result:
             for a, b in pair:
-                fh.write(a + '\t' + b + '\n')
+                fh.write(a + "\t" + b + "\n")
 
     return result
 
 # Name: enrich
 # Process: runs pepsirf's enrich module
-# Method inputs/parameters: source, thresh_file, zscores, col_sum, exact_z_thresh,
-# exact_cs_thresh, raw_scores, raw_constraint, enrichment_failure, truncate,
-# outfile, pepsirf_binary
+# Method inputs/parameters: source, thresh_file, zscores, col_sum,
+# exact_z_thresh, exact_cs_thresh, raw_scores, raw_constraint,
+# enrichment_failure, truncate, outfile, pepsirf_binary
 # Method outputs/Returned: the enriched directory
 # Dependencies: subprocess, os, csv, tempfile
 def enrich(
@@ -55,7 +56,7 @@ def enrich(
 
     #get absolute file path to pepsirf if it is a file
     if os.path.isfile(pepsirf_binary):
-        pepsirf_binary = "%s" % (os.path.abspath(pepsirf_binary))
+        pepsirf_binary = "%s" % os.path.abspath(pepsirf_binary)
 
     #open temp directory
     with tempfile.TemporaryDirectory() as tempdir:
@@ -70,39 +71,45 @@ def enrich(
 
         #create threshold file if not provided
         if not thresh_file:
-
             #create a temporary thresh file in the temporary directory
             with open(tmp_thresh_file, "w", newline="") as out_file:
-                    tsv_writer = csv.writer(out_file, delimiter="\t")
-                    tsv_writer.writerow([str(zscores), exact_z_thresh])
-                    tsv_writer.writerow([str(col_sum), exact_cs_thresh])
-        
+                tsv_writer = csv.writer(out_file, delimiter="\t")
+                tsv_writer.writerow([str(zscores), exact_z_thresh])
+                tsv_writer.writerow([str(col_sum), exact_cs_thresh])
         else:
             tmp_thresh_file = str(thresh_file)
 
         #put together command
-        cmd = "%s enrich -t %s -s %s -x %s -o %s" % (pepsirf_binary, tmp_thresh_file, tmp_pairs_file, out_suffix, str(dir_fmt_output))
+        cmd = (
+            "%s enrich -t %s -s %s -x %s -o %s"
+            % (
+                pepsirf_binary, tmp_thresh_file, tmp_pairs_file,
+                out_suffix, str(dir_fmt_output)
+            )
+        )
 
         #add optionals to command
         if raw_scores:
-            cmd += " -r %s" % (str(raw_scores))
+            cmd += " -r %s" % str(raw_scores)
         if raw_constraint:
-            cmd += " --raw_score_constraint %s" % (str(raw_constraint))
+            cmd += " --raw_score_constraint %s" % str(raw_constraint)
         if enrichment_failure:
             enrichment_failure = "failedEnrichment.txt"
-            cmd += " -f %s" % (enrichment_failure)
+            cmd += " -f %s" % enrichment_failure
         if truncate:
             cmd += " --output_filename_truncate"
 
         #add outfile to command
-        cmd += " >> %s" % (outfile)
+        cmd += " >> %s" % outfile
 
         #run command
         s = subprocess.run(cmd, shell=True, check=True)
 
         #check exit code and raise error if not 0
         if s.returncode > 0:
-            raise ValueError("Enrich module failed. Exit code %s." % (str(s.returncode)))
+            raise ValueError(
+                "Enrich module failed. Exit code %s." % str(s.returncode)
+            )
 
         # check if failure file exists
         failed = (dir_fmt_output.path/"failedEnrichment.txt")

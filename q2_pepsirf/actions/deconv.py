@@ -25,9 +25,9 @@ def collect_cmd(
 
     #start command with required/defualt parameters
     cmd = (
-        "%s deconv -e %s -t %s -l "
-        "%s --scoring_strategy %s --score_tie_threshold %s "
-        "--score_overlap_threshold %s -o %s -s %s"
+        "%s deconv -e %s -t %s -l"
+        " %s --scoring_strategy %s --score_tie_threshold %s"
+        " --score_overlap_threshold %s -o %s -s %s"
         % (
             pepsirf_binary, enriched, threshold,
             linked, scoring_strategy, score_tie_threhold,
@@ -39,8 +39,8 @@ def collect_cmd(
     if score_filtering:
         cmd += " --score_filtering"
     if id_name_map:
-        id_name_map = "'%s'" % (str(id_name_map))
-        cmd += " --id_name_map %s " % (id_name_map)
+        id_name_map = "%s" % str(id_name_map)
+        cmd += " --id_name_map %s " % id_name_map
     if single_threaded:
         cmd += " --single_threaded"
 
@@ -169,7 +169,7 @@ def deconv_batch(
             cmd += " -r"
 
         #add outfile to command
-        cmd += " >> %s" % (outfile)
+        cmd += " >> %s" % outfile
 
         #run command in the command line
         subprocess.run(cmd, shell=True, check=True)
