@@ -10,12 +10,12 @@ import qiime2
 import subprocess
 import tempfile
 
-# Name: _make_pair_list
+# Name: _make_pairs_file
 # Process: function used to take source metadata and create pairs files
 # Method inputs/parameters: column, outpath
 # Method outputs/Returned: the pairs result
 # Dependencies: itertools
-def _make_pairs_list(column, outpath):
+def _make_pairs_file(column, outpath):
     series = column.to_series()
     pairs = {k: v.index for k,v in series.groupby(series)}
     result = []
@@ -30,15 +30,31 @@ def _make_pairs_list(column, outpath):
 
     return result
 
+# Name: _make_reps_file
+# Process: function used to take source metadata and create replicates files
+# Method inputs/parameters: column, outpath
+# Method outputs/Returned: None
+# Dependencies: itertools
+def _make_reps_file(column, outpath):
+    series = column.to_series()
+    pairs = {k: v.index for k,v in series.groupby(series)}
+    with open( outpath, 'w' ) as of:
+        for _, reps in pairs.items():
+            for rep in reps[:len(reps) - 1]:
+                of.write( rep + "\t" )
+            of.write( reps[ len(reps) - 1] )
+            of.write( "\n" )
+
 # Name: enrich
 # Process: runs pepsirf's enrich module
-# Method inputs/parameters: source, thresh_file, zscores, col_sum,
+# Method inputs/parameters: source, flex_reps, thresh_file, zscores, col_sum,
 # exact_z_thresh, exact_cs_thresh, raw_scores, raw_constraint,
 # enrichment_failure, truncate, outfile, pepsirf_binary
 # Method outputs/Returned: the enriched directory
 # Dependencies: subprocess, os, csv, tempfile
 def enrich(
         source: qiime2.CategoricalMetadataColumn,
+        flex_reps: bool = False,
         thresh_file: EnrichThreshFileFormat = None,
         zscores: PepsirfContingencyTSVFormat = None,
         col_sum: PepsirfContingencyTSVFormat = None,
@@ -60,10 +76,14 @@ def enrich(
 
     #open temp directory
     with tempfile.TemporaryDirectory() as tempdir:
-
-        #make pairs file with given source metadata
-        tmp_pairs_file = os.path.join(tempdir, "pairs.tsv")
-        _make_pairs_list(source, tmp_pairs_file)
+        # check invocation by flexible reps
+        if flex_reps:
+            # make reps file with given source metadata
+            pairsFile = os.path.join(tempdir, "pairs.tsv")
+            _make_reps_file(source, pairsFile)
+        else: # otherwise, assume infer pairs
+            pairsFile = os.path.join(tempdir, "pairs.tsv")
+            _make_pairs_file(source, pairsFile)
 
         #set up default threshold files and peptide enrichment suffix
         tmp_thresh_file = os.path.join(tempdir, "tempThreshFile.tsv")
@@ -72,7 +92,7 @@ def enrich(
         #create threshold file if not provided
         if not thresh_file:
             #create a temporary thresh file in the temporary directory
-            with open(tmp_thresh_file, "w", newline="") as out_file:
+            with open(threshFile, "w", newline="") as out_file:
                 tsv_writer = csv.writer(out_file, delimiter="\t")
                 tsv_writer.writerow([str(zscores), exact_z_thresh])
                 tsv_writer.writerow([str(col_sum), exact_cs_thresh])
@@ -126,4 +146,3 @@ def enrich(
 
         #return enrich directory as qza
         return dir_fmt_output
-

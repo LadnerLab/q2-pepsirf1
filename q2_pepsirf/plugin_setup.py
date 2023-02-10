@@ -340,6 +340,7 @@ plugin.methods.register_function(
     parameters={
         "exact_z_thresh": Str,
         "raw_constraint": Int % Range(0, None),
+        "flex_reps": Bool,
         "enrichment_failure": Bool,
         "truncate": Bool,
         "pepsirf_binary": Str,
@@ -842,13 +843,13 @@ plugin.methods.register_function(
             " will be in the form of a tab-delimited file with a header.",
         "score_per_round": "Name of directory to write counts/scores to after"
             " every round. If included, the counts and scores for all"
-                " remaining taxa will be recorded after every round. Filenames"
-                " will be written in the format '$dir/round_x', where x is the"
-                " round number. The original scores will be written to"
-                " '$dir/round_0'. A new file will be written to the directory"
-                " after each subsequent round. If this flag is included and"
-                " the specified directory exists, the program will exit with"
-                " an error.",
+            " remaining taxa will be recorded after every round. Filenames"
+            " will be written in the format '$dir/round_x', where x is the"
+            " round number. The original scores will be written to"
+            " '$dir/round_0'. A new file will be written to the directory"
+            " after each subsequent round. If this flag is included and"
+            " the specified directory exists, the program will exit with"
+            " an error.",
         "peptide_assignment_map": "Optional output. If specified, a map"
             " detailing which peptides were assigned to which taxa will be"
             " written. If this module is run in batch mode, this will be used"
@@ -998,4 +999,3 @@ plugin.methods.register_function(
 
 # import all sematic type transformers
 importlib.import_module("q2_pepsirf.transformers")
-
