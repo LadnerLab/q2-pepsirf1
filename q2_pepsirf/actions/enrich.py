@@ -79,11 +79,11 @@ def enrich(
         # check invocation by flexible reps
         if flex_reps:
             # make reps file with given source metadata
-            pairsFile = os.path.join(tempdir, "pairs.tsv")
-            _make_reps_file(source, pairsFile)
+            tmp_pairs_file = os.path.join(tempdir, "pairs.tsv")
+            _make_reps_file(source, tmp_pairs_file)
         else: # otherwise, assume infer pairs
-            pairsFile = os.path.join(tempdir, "pairs.tsv")
-            _make_pairs_file(source, pairsFile)
+            tmp_pairs_file = os.path.join(tempdir, "pairs.tsv")
+            _make_pairs_file(source, tmp_pairs_file)
 
         #set up default threshold files and peptide enrichment suffix
         tmp_thresh_file = os.path.join(tempdir, "tempThreshFile.tsv")
@@ -92,7 +92,7 @@ def enrich(
         #create threshold file if not provided
         if not thresh_file:
             #create a temporary thresh file in the temporary directory
-            with open(threshFile, "w", newline="") as out_file:
+            with open(tmp_thresh_file, "w", newline="") as out_file:
                 tsv_writer = csv.writer(out_file, delimiter="\t")
                 tsv_writer.writerow([str(zscores), exact_z_thresh])
                 tsv_writer.writerow([str(col_sum), exact_cs_thresh])
