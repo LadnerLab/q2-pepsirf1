@@ -25,7 +25,7 @@ def collect_cmd(
 
     #start command with required/defualt parameters
     cmd = (
-        "%s deconv -e %s -t %s -l"
+        "%s deconv -e %s --enriched_file_ending paired.txt -t %s -l"
         " %s --scoring_strategy %s --score_tie_threshold %s"
         " --score_overlap_threshold %s -o %s -s %s"
         % (
