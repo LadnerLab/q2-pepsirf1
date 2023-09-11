@@ -673,6 +673,7 @@ deconv_shared_inputs = {
 
 # shared parameters for deoncv singular mode and batch mode
 deconv_shared_parameters = {
+    "enriched_file_ending": Str,
     "pepsirf_binary": Str,
     "outfile": Str,
     "threshold": Int,
@@ -697,6 +698,8 @@ deconv_shared_input_descript = {
 
 # shared parameter descriptions for deoncv singular mode and batch mode
 deconv_shared_parameters_descript = {
+    "enriched_file_ending": "Optional flag that specifies what string is"
+        " expected at the end of each file containing enriched peptides.",
     "pepsirf_binary": "The binary to call pepsirf on your system.",
     "outfile": "The outfile that will produce a list of inputs to PepSIRF.",
     "threshold": "Minimum score that a taxon must obtain in order to be"
@@ -717,7 +720,7 @@ deconv_shared_parameters_descript = {
         " fractional scoring, the score is assigned to each peptide/ID pair is"
         " defined by 1/n for each peptide, where n is the number of IDs to"
         " which a peptide is linked. In this method of scoring peptides, a"
-        " peptide with fewer linked IDs is worth more points..",
+        " peptide with fewer linked IDs is worth more points.",
     "score_filtering": "Include this option if you want filtering to be done"
         " by the score of each taxon, rather than the count of linked"
         " peptides. If used, any taxon with a score below '--threshold' will"
