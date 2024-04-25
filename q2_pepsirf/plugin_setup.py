@@ -371,6 +371,12 @@ plugin.methods.register_function(
         "raw_constraint": "The minimum total raw count across all peptides for"
             " a sample to be included in the analysis.This provides a way to"
             " impose a minimum read count for a sample to be evaluated.",
+        "flex_reps": "Will infer the number of replicates for each"
+            " sample based on sample names, and will not require any specific"
+            " number of replicates for inclusion. Therefore, some samples may"
+            " have a single replicate, some may have 2, 3, 4 etc. And all"
+            " replicates of a given sample will be considered for determining"
+            " enriched peptides.",
         "enrichment_failure": "For each sample set that does not result in the"
             " generation of an enriched peptide file, a row of two"
             " tab-delimited columns is provided: the first column contains the"
