@@ -1,14 +1,14 @@
+import os
+import subprocess
+import tempfile
+import qiime2
+
 from distutils.dir_util import copy_tree
 from q2_pepsirf.format_types import(
     PeptideIDListFmt, PepsirfLinkTSVFormat, PepsirfDMPFormat,
     EnrichedPeptideDirFmt, PepsirfDeconvSingularFormat, ScorePerRoundDirFmt,
     PepsirfDeconvBatchDirFmt, PeptideAssignMapDirFmt
 )
-
-import os
-import subprocess
-import tempfile
-import qiime2
 
 # Name: collect_cmd
 # Process: collects default and required commands for PepSIRF's deconv module
@@ -18,20 +18,20 @@ import qiime2
 # Method outputs/Returned: the full command
 # Dependencies: None
 def collect_cmd(
-        pepsirf_binary, enriched, threshold,
-        linked, scoring_strategy, score_tie_threhold,
-        score_overlap_threshold, tsv_out, score_filtering,
-        id_name_map, single_threaded, score_per_round):
+        pepsirf_binary, enriched, enriched_file_ending, threshold, linked,
+        scoring_strategy, score_tie_threhold, score_overlap_threshold, tsv_out,
+        score_filtering, id_name_map, single_threaded, score_per_round
+    ):
 
     #start command with required/defualt parameters
     cmd = (
-        "%s deconv -e %s -t %s -l"
+        "%s deconv -e %s --enriched_file_ending %s -t %s -l"
         " %s --scoring_strategy %s --score_tie_threshold %s"
         " --score_overlap_threshold %s -o %s -s %s"
         % (
-            pepsirf_binary, enriched, threshold,
-            linked, scoring_strategy, score_tie_threhold,
-            score_overlap_threshold, tsv_out, score_per_round
+            pepsirf_binary, enriched, enriched_file_ending, threshold, linked,
+            scoring_strategy, score_tie_threhold, score_overlap_threshold,
+            tsv_out, score_per_round
         )
     )
 
@@ -48,7 +48,7 @@ def collect_cmd(
     
 # Name: deconv_singular
 # Process: runs PepSIRF's deconv module in singular mode
-# Method inputs/parameters: enriched, threshold, linked,
+# Method inputs/parameters: enriched, enriched_file_ending, threshold, linked,
 # scoring_stratgey, score_filtering, score_tie_threshold,
 # score_ocerlap_threshold, id_name_map, single_threaded,
 # outfile, pepsirf_binary
@@ -59,6 +59,7 @@ def deconv_singular(
         enriched: PeptideIDListFmt,
         threshold: int,
         linked: PepsirfLinkTSVFormat,
+        enriched_file_ending: str = "_enriched.txt",
         scoring_strategy: str = "summation",
         score_filtering: bool = False,
         score_tie_threshold: float = 0.0,
@@ -86,7 +87,7 @@ def deconv_singular(
 
         #start command with required/defualt parameters
         cmd = collect_cmd(
-            pepsirf_binary, enriched, threshold,
+            pepsirf_binary, enriched, enriched_file_ending, threshold,
             linked, scoring_strategy, score_tie_threshold,
             score_overlap_threshold, tsv_out, score_filtering,
             id_name_map, single_threaded, os.path.join(tempdir, "out_score")
@@ -105,7 +106,7 @@ def deconv_singular(
 
 # Name: deconv_batch
 # Process: runs PepSIRF's deconv module in batch mode
-# Method inputs/parameters: enriched, threshold, linked,
+# Method inputs/parameters: enriched, enriched_file_ending, threshold, linked,
 # outfile_suffix, mapfile_suffix, remove_file_types
 # scoring_stratgey, score_filtering, score_tie_threshold,
 # score_overlap_threshold, id_name_map, single_threaded,
@@ -119,6 +120,7 @@ def deconv_batch(
         linked: PepsirfLinkTSVFormat,
         outfile_suffix: str,
         mapfile_suffix: str,
+        enriched_file_ending: str = "_enriched.txt",
         scoring_strategy: str = "summation",
         score_filtering: bool = False,
         score_tie_threshold: float = 0.0,
@@ -154,10 +156,10 @@ def deconv_batch(
 
         #start command with required/defualt parameters
         cmd = collect_cmd(
-            pepsirf_binary, temp_enriched, threshold,
+            pepsirf_binary, temp_enriched, enriched_file_ending, threshold,
             linked, scoring_strategy, score_tie_threshold,
-            score_overlap_threshold, dir_out, score_filtering,
-            id_name_map, single_threaded, os.path.join(tempdir, "out_score")
+            score_overlap_threshold, dir_out, score_filtering, id_name_map,
+            single_threaded, os.path.join(tempdir, "out_score")
         )
 
         cmd += (
@@ -177,4 +179,3 @@ def deconv_batch(
         copy_tree(os.path.join(tempdir, "out_score"), str(score_per_round))
 
     return dir_out, score_per_round, map_dir
-
