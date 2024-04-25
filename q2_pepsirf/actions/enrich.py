@@ -49,7 +49,7 @@ def _make_reps_file(column, outpath):
 # Process: runs pepsirf's enrich module
 # Method inputs/parameters: source, flex_reps, thresh_file, zscores, col_sum,
 # exact_z_thresh, exact_cs_thresh, raw_scores, raw_constraint,
-# enrichment_failure, truncate, outfile, pepsirf_binary
+# enrichment_failure, truncate, low_raw_reads, outfile, pepsirf_binary
 # Method outputs/Returned: the enriched directory
 # Dependencies: subprocess, os, csv, tempfile
 def enrich(
@@ -64,9 +64,10 @@ def enrich(
         raw_constraint: int = None,
         enrichment_failure: bool = False,
         truncate: bool = False,
+        low_raw_reads: bool = False,
         outfile: str = "./enrich.out",
-        pepsirf_binary: str = "pepsirf") -> EnrichedPeptideDirFmt:
-
+        pepsirf_binary: str = "pepsirf"
+) -> EnrichedPeptideDirFmt:
     #create EnrichedPeptideDirFmt output
     dir_fmt_output = EnrichedPeptideDirFmt()
 
@@ -116,6 +117,8 @@ def enrich(
         if enrichment_failure:
             enrichment_failure = "failedEnrichment.txt"
             cmd += " -f %s" % enrichment_failure
+        if low_raw_reads:
+            cmd += " --low_raw_reads"
         if truncate:
             cmd += " --output_filename_truncate"
 
