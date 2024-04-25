@@ -64,9 +64,10 @@ def enrich(
         raw_constraint: int = None,
         enrichment_failure: bool = False,
         truncate: bool = False,
+        low_raw_reads: bool = False,
         outfile: str = "./enrich.out",
-        pepsirf_binary: str = "pepsirf") -> EnrichedPeptideDirFmt:
-
+        pepsirf_binary: str = "pepsirf"
+) -> EnrichedPeptideDirFmt:
     #create EnrichedPeptideDirFmt output
     dir_fmt_output = EnrichedPeptideDirFmt()
 
@@ -116,6 +117,8 @@ def enrich(
         if enrichment_failure:
             enrichment_failure = "failedEnrichment.txt"
             cmd += " -f %s" % enrichment_failure
+        if low_raw_reads:
+            cmd += " --low_raw_reads"
         if truncate:
             cmd += " --output_filename_truncate"
 
